@@ -6,25 +6,23 @@ from django.core import serializers
 from home.models import ShopifySite
 from django.shortcuts import render,redirect
 
-def loggedIn(fn):
-    def wrapper(request, *args, **kwargs):
-        
-        userSession = request.session["userDetails"]
-        if userSession is None:
-            return render(request,"login.html")
-        
-        if os.getenv("SHOPIFY_TOKEN") is not None:
+def requiresLogin(permissionsRequired=None):
+    def decorator(fn):
+        def wrapper(request, *args, **kwargs):
+            
+            userSession = request.session["userDetails"]
+            if userSession is None:
+                return render(request,"login.html")
+            userPermissions = userSession.get("permissions")
+            if permissionsRequired is not None:
+                for permission in permissionsRequired:
+                    if permissionsRequired not in userPermissions:
+                        return render(
+                            request,
+                            "base/noperms.html",
+                            {}
+                        )
             return fn(request, *args, **kwargs)
-        elif not hasattr(request, 'session') or 'shopify' not in request.session:
-            if "shop" in request.GET:
-                return views.authenticate(request)
-            else:    
-                request.session['return_to'] = request.get_full_path()
-                return redirect(reverse(views.login))
-        elif "shop" in request.GET and request.GET["shop"]!=request.session["shopify"]["shop_url"]:
-            request.session['return_to'] = request.get_full_path()
-            return views.authenticate(request)
-        
-        return fn(request, *args, **kwargs)
-    wrapper.__name__ = fn.__name__
-    return wrapper
+        wrapper.__name__ = fn.__name__
+        return wrapper
+    return decorator

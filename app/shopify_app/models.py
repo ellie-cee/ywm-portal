@@ -4,19 +4,17 @@ from django.db import models
 from .graphql import GraphQL
 from .queries import authorizedScopes
 import shopify
+from home.models import BaseModel
 
 # Create your models here.
 
-class AppScopes(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class AppScopes(BaseModel):
     scopeName = models.CharField(max_length=255)
     
     class Meta:
         db_table = "required_scopes"
 
-class ShopifySite(models.Model):
-    
-    id = models.BigAutoField(primary_key=True)
+class ShopifySite(BaseModel):
     shopName = models.CharField(max_length=255)
     shopDomain = models.CharField(max_length=128,db_index=True)
     authToken = models.CharField(max_length=255)

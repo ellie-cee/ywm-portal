@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b935197818161b3ed2602ee42190807658a5995cf52adc3c9e9f33181802f2af"
+            "sha256": "33a9f3b8e68294c91a7a3342fde4c0c46fefe8ee261211bc0825dd146b4c0a3b"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -167,6 +167,40 @@
             "markers": "python_version >= '3.10'",
             "version": "==5.2.6"
         },
+        "django-filter": {
+            "hashes": [
+                "sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153",
+                "sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==25.1"
+        },
+        "django-shopify-webhook": {
+            "hashes": [
+                "sha256:d5b79195b85e056b211a950bad82533ccf2eb841edd0b7edbd779b78b20933b6"
+            ],
+            "index": "pypi",
+            "version": "==0.8.0"
+        },
+        "djangorestframework": {
+            "hashes": [
+                "sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7",
+                "sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==3.16.1"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:ec400d38950de4dfd418cff8328b2c8faed0edb0d517d3394e457c317908ca4d",
+                "sha256:f014447a0101dc57e294f6c18ca6b40227a4c90e9bdb586042628030cba004ec"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==23.0.0"
+        },
         "idna": {
             "hashes": [
                 "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9",
@@ -330,6 +364,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==2.2.7"
+        },
+        "packaging": {
+            "hashes": [
+                "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484",
+                "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==25.0"
         },
         "peewee": {
             "hashes": [
@@ -596,9 +638,13 @@
             "markers": "python_version >= '3.9'",
             "version": "==2.32.5"
         },
-        "shopify-image-uploader": {
-            "git": "git+https://github.com/ellie-cee/shopify-image-uploader.git",
-            "ref": "5a28f3dd0fd51f223d26e460e21ddeca6b110a6c"
+        "setuptools": {
+            "hashes": [
+                "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922",
+                "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c"
+            ],
+            "markers": "python_version >= '3.9'",
+            "version": "==80.9.0"
         },
         "shopifyapi": {
             "file": "git+https://github.com/Shopify/shopify_python_api.git",

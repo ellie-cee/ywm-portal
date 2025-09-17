@@ -1,19 +1,18 @@
 from django.db import models
 from datetime import datetime,timedelta
 import random
+from home.models import BaseModel
 
 # Create your models here.
 
-class UserPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
+class UserPermissions(BaseModel):
     name = models.CharField(max_length=64,db_index=True)
     
     class Meta:
         db_table = "user_permission"
 
-class User(models.Model):
-    
-    id = models.BigAutoField(primary_key=True)
+
+class User(BaseModel):
     name = models.TextField(default="No Name")
     email = models.EmailField(db_index=True)
     permissions = models.ManyToManyField(UserPermissions)
@@ -29,10 +28,12 @@ class User(models.Model):
             expires=datetime.now()+timedelta(minutes=60),
             code=AuthRequest.generateCode()
         )
+        auth.save()
+        return auth
     class Meta:
         db_table="ywm_user"
 
-class AuthRequest(models.Model):
+class AuthRequest(BaseModel):
     
     id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -42,6 +43,10 @@ class AuthRequest(models.Model):
     @staticmethod
     def generateCode():
         return "".join([str(random.randint(0,9)) for x in range(6)])
+    def isExpired(self):
+        return self.expires<datetime.now()
+    def matches(self,supliedCode):
+        return self.code==supliedCode
     
     class Meta:
         db_table="auth_request"

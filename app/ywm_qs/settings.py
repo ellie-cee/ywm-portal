@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
     'ywm_auth.apps.AuthConfig',
-    'shopify_app.apps.ShopifyAppConfig'
+    'shopify_app.apps.ShopifyAppConfig',
 ]
 
 MIDDLEWARE = [

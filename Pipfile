@@ -7,7 +7,6 @@ verify_ssl = true
 
 [packages]
 ShopifyAPI = {file = "git+https://github.com/Shopify/shopify_python_api.git"}
-shopify_uploader = {file="git+https://github.com/ellie-cee/shopify-image-uploader.git"}
 mysqlclient = "*"
 peewee = ">=3.17.9"
 tortoise-orm="*"
@@ -35,5 +34,3 @@ django="*"
 djangorestframework="*"
 django-filter="*"
 django-shopify-webhook = ">=0.6.0"
-
-
