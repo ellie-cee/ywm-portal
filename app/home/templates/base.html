@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>YWM Utilities</title>
+        <link href="https://www.yellowwebmonkey.com/wp-content/cache/fonts/1/google-fonts/css/d/a/9/29bf8857dfd265d8a99a681b6c027.css" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/site.css">
+    </head>
+    <body>
+        <div class="header">
+            <div class="header-img"><img src="/static/img/ywm_rectangle_brown_logo_600px.png"></div>
+        </div>
+    <div class="body">
+        <div class="sidebar">
+            {% block sidebar %}
+            {% blockend %}
+        </div>
+        {% block content %}
+        content
+        {% blockend %}
+    </div>
+    </body>
+</html>

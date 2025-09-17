@@ -1,0 +1,181 @@
+import urllib.error
+import shopify
+import json
+import logging
+import urllib
+import time
+import signal
+import http.client
+import sys
+logger = logging.getLogger(__name__)
+from ..home.shared import SearchableDict
+
+
+class GqlReturn(SearchableDict):
+    def errors(self,dump=False):
+        if not hasattr(self,"errorDetails"):
+            errorDetails = self.findErrors(self.data)
+            setattr(self,"errorDetails",errorDetails)
+            if dump:
+                print(json.dumps(errorDetails,indent=1),file=sys.stderr)
+               
+        return self.errorDetails
+        
+    def findErrors(self,object):
+        if isinstance(object, dict):
+            if "userErrors" in object:
+                return object["userErrors"]
+            elif "errors" in object:
+                return [{"message":x.get("message"),"code":"NA","field":SearchableDict(x).search("problems[0].path[-1]")} for x in object.get("errors")]
+            for key in object:
+                item = self.findErrors(object[key])
+                if item is not None:
+                    return item
+            
+        elif isinstance(object, list):  
+            for element in object:
+                item = self.findErrors(element)
+                if item is not None:
+                    return item
+        return None
+    def errorMessages(self):
+        if self.errors() is None:
+            return []
+        return [x.get("message") for x in self.errors()]
+    def errorCodes(self):
+        if self.errors() is None:
+            return []
+        return [x.get("code") for x in self.errors()]
+    def hasErrorCode(self,code):
+        return code in self.errorCodes()
+    def hasErrors(self):
+        return self.errors() is not None and  len(self.errors())>0
+    def nodes(self,path):
+        return [GqlReturn(x) for x in self.search(f"{path}.nodes",[])]
+    def throttleRemaining(self):
+        return self.search("extensions.cost.throttleStatus.currentlyAvailable",0)
+    
+    def isDevThrottled(self):
+        errors = self.findErrors(self.data)
+        if errors is not None:
+            for error in errors:
+                if "Too many attempts" in error.get("message"):
+                    return True
+        return False
+    def getDataRoot(self):
+        actualData = None
+        if self.data.get("data") is None:
+            return self
+        
+        for key,value in self.data.get("data").items():
+            if key not in ["errors","userErrors"]:
+                actualData = value        
+                break
+        if actualData is not None:
+            self.data = actualData
+        return SearchableDict(self.data)
+
+
+def log(message):
+    print(message,flush=True)
+
+def catchNetWorkError(fn):
+    def wrapper(self, *args, **kwargs):
+        retry = True
+        retryCount = 0
+        while retry and retryCount<10:
+            try:
+                ret:GqlReturn = fn(self,*args, **kwargs)
+                if ret.isDevThrottled():
+                    retry = True
+                    retryCount = retryCount + 1
+                    log(f"dev throttle: retrying {retryCount}/10")
+                    time.sleep(20)
+                else:
+                    retry = False
+                    return ret
+            except urllib.error.HTTPError as e:
+                retryCount = retryCount + 1
+                log(f"retrying {retryCount}/10")
+                time.sleep(3)
+            except urllib.error.URLError as e:
+                retryCount = retryCount + 1
+                log(f"retrying {retryCount}/10")
+                time.sleep(3)
+            except http.client.RemoteDisconnected:
+                retryCount = retryCount + 1
+                log(f"retrying {retryCount}/10")
+                time.sleep(3)
+            except KeyboardInterrupt:
+                sys.exit()
+            except Exception as e:
+                retryCount = retryCount + 1
+                log(f"retrying {retryCount}/10")
+                time.sleep(3)
+    wrapper.__name__ = fn.__name__
+    return wrapper
+    
+class GraphQL:
+    def __init__(self,debug=False,searchable=True,minThrottle=1000):
+        self.debugging = debug
+        self.debuggingIndent=1
+        self.searchable = searchable
+        self.minThrottleAvailable=minThrottle
+    def debug(self,value=True,level=1):
+        self.debugging = value
+        self.debuggingIndent = level
+        
+    @catchNetWorkError    
+    def run(self,query,variables={},searchable=True,throttle=5000):
+        ret = json.loads(shopify.GraphQL().execute(query,variables))
+        retVal = GqlReturn(ret)
+        
+
+        if throttle is not None:
+            if retVal.throttleRemaining()<throttle:
+                log(f"throttling at {retVal.throttleRemaining()}")
+                time.sleep(2)
+        
+        return retVal
+    def iterable(self,query,params,dataroot="data.products"):
+        return GraphQlIterable(query,params,dataroot=dataroot)
+        pass
+    
+        
+class GraphQlIterable(GraphQL):
+    def __init__(self, query,params,dataroot="data.products"):
+        super().__init__(searchable=True,debug=False)
+        self.cursor = None
+        self.hasNext = True
+        self.query = query
+        self.params = params
+        self.dataroot = dataroot
+    def __iter__(self):
+        return self
+    def __next__(self):
+        if not self.hasNext:
+            raise StopIteration
+        self.params["after"] = self.cursor
+        ret = self.run(self.query,self.params)
+        
+        
+        if ret.get("data") is not None:
+            try:
+                self.dataroot = f'data.{next(iter(ret.search("data").keys()),None)}'
+            except:
+                ret.dump()
+                sys.exit()
+        
+        if ret.hasErrors():
+            print(json.dumps(ret.errorMessages(),indent=1))
+        values = [GqlReturn(x) for x in ret.search(f"{self.dataroot}.nodes",[])]
+        
+        if ret.search(f"{self.dataroot}.pageInfo.hasNextPage"):
+            self.hasNext = True
+            self.cursor = ret.search(f"{self.dataroot}.pageInfo.endCursor")
+            
+        else:
+            self.hasNext = False
+        return values
+        
+        

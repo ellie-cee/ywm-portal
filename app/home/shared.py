@@ -1,0 +1,79 @@
+import sys
+from jmespath import search as jpath
+import json
+from dict_recursive_update import recursive_update
+
+
+class SearchableDict:
+    def __init__(self,data):
+        if data is None:
+            return None
+        for k in data.keys():
+            if not hasattr(self,k):
+                setattr(self,k,data[k])
+        self.data = data
+    def search(self,path,default=None):
+        ret =  jpath(path,self.data)
+        if ret is None:
+            return default
+        return ret
+    def has(self,key):
+        return hasattr(self,key)
+    def get(self,key,default=None):
+        if hasattr(self,key) and getattr(self,key) is not None:
+            return getattr(self,key)
+        else:
+            return default
+    def valueOf(self,key):
+        ret = self.get(key)
+        if ret is dict and self.search(f"{key}.refName"):
+            return self.search(f"{key}.refName")
+        else:
+            return ret
+    def dump(self,printIt=True):
+        if printIt:
+            print(json.dumps(self.data,indent=1),file=sys.stderr)
+        else:
+            return self.data
+    def set(self,key,value):
+        paths = list(reversed(key.split(".")))
+        if len(paths)>1:
+            object = value
+            for k in paths:
+                object = {k:object}
+            self.data = recursive_update(self.data,object)
+        else:
+            self.data[key] = value
+    def getAsSearchable(self,key,default={}):
+        val = self.search(key)
+        if isinstance(val,list):
+            return [SearchableDict(x) for x in val]
+        if isinstance(val,dict):
+            return SearchableDict(val)
+        if val is None:
+            return None
+        return val
+    
+    def append(self,key,value):
+        myValue = self.search(key,[])
+        myValue.append(value)
+        self.set(key,myValue)
+        return
+        if key not in self.data:
+            self.data[key] = value
+        elif type(self.data[key]) is not list:
+            self.data[key] = [self.data[key],value]
+        else:
+            self.data[key].append(value)
+    @staticmethod
+    def fromList(list):
+        return [SearchableDict(x) for x in list]
+    def dumpField(self,path):
+        ret = self.search(path)
+        if ret is None:
+            print("None")
+        else:
+            if isinstance(ret,dict) or isinstance(ret,list):
+                print(json.dumps(ret,indent=1))
+            else:
+                print(ret)
