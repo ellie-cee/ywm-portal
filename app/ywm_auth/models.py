@@ -34,8 +34,6 @@ class User(BaseModel):
         db_table="ywm_user"
 
 class AuthRequest(BaseModel):
-    
-    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     code = models.CharField(max_length=64,db_index=True)
     expires = models.DateTimeField()
