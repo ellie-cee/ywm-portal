@@ -20,9 +20,9 @@
             })
         })
     });
-    document.querySelector("[data-create-shop]").addEventListener("click",event=>{
-        window.shopForm = new ShopifySite({});
-    })
+    window.shopForm = new ShopifySite({
+        "shopId":"{{ request.GET.shopId }}"
+    });
     // const 
     
 </script>
@@ -36,6 +36,6 @@
         </li>
 
     {% endfor %}
-    <li data-create-shop="">Add Shop</li>
+    <li ><a href="/shops">New Shop</a></li>
 </ul>
 {% endblock%}

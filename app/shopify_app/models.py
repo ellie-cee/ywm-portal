@@ -1,6 +1,7 @@
 import os
 import sys
 from django.db import models
+from home.models import IdAware
 from .graphql import GraphQL
 from .queries import authorizedScopes
 import shopify
@@ -9,14 +10,14 @@ import uuid
 
 # Create your models here.
 
-class AppScopes(models.Model):
+class AppScopes(models.Model,IdAware):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     scopeName = models.CharField(max_length=255)
     
     class Meta:
         db_table = "required_scopes"
 
-class ShopifySite(models.Model):
+class ShopifySite(models.Model,IdAware):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     shopName = models.CharField(max_length=255)
     shopDomain = models.CharField(max_length=128,db_index=True)

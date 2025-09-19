@@ -11,9 +11,13 @@
             <div class="header-img"><img src="/static/img/ywm_rectangle_brown_logo_600px.png"></div>
         </div>
     <div class="body">
+        
         <div class="sidebar">
             {% block sidebar %}
             {% endblock %}
+            {% if request.session.userDetails %}
+                {% include "sitenav.html" %}
+            {% endif %}    
         </div>
         <div class="main-content">
             {% block content %}

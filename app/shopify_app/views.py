@@ -17,7 +17,7 @@ def index(request):
         request,
         "siteform.html",
         {
-            "shops":ShopifySite.objects.all()
+            "shops":ShopifySite.objects.order_by("shopName").all()
         }
     )
 def create(request):
@@ -75,6 +75,7 @@ def checkScopes(request,shopifySite=None):
     return jsonResponse(
         {
             "shop":model_to_dict(shopifySite),
+            "shopId":str(shopifySite.id)
         },
         status=200
     )
@@ -102,6 +103,20 @@ def deleteSite(request,shopId):
         {"message":"deleted"},
         200
     )
-        
+def listSites(request):
+    return jsonResponse(
+        {
+            "shopList":[{"id":shop.getId(),"shopName":shop.shopName} for shop in ShopifySite.objects.all()]
+        },
+        200
+    )
+def listThemes(request):
+    shopifySite = ShopifySite.objects.last()
+    return jsonResponse(
+        {
+            "shopList":[{"id":theme.get("id"),"name":theme.get("name")} for theme in shopifySite.getThemes()]
+        },
+        200
+    )
     
 

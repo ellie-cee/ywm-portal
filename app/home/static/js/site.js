@@ -54,7 +54,7 @@ class Esc {
 }
 
 class EscModal extends Esc {
-    static show(content,closeable=true) {
+    static show(content,config={}) {
         let modal = document.querySelector(".esc-modal");
         if (!modal) {
             modal = document.createElement("DIV");
@@ -74,7 +74,9 @@ class EscModal extends Esc {
             </div>
         </div>
         `;
-        if (closeable){
+        if (config.cantClose){
+            modal.querySelector(".close").style.display="none";
+        } else {
           modal.querySelector(".close").style.display="block";
           modal.querySelector(".close").addEventListener("click",event=>{
               modal.classList.remove("active");
@@ -89,11 +91,13 @@ class EscModal extends Esc {
                 modal.innerHTML = "";
                 document.querySelector("body").classList.remove("stop-scrolling");
                 document.dispatchEvent(new CustomEvent("esc:modal:closed",{bubbles:true}))
+                if(config.onClose) {
+                    console.error(config.onClose())
+                    config.onClose()
+                }
             }
           })
-        } else {
-          modal.querySelector(".close").style.display="none";
-        }
+        } 
         document.querySelector("body").classList.add("stop-scrolling");
         modal.classList.add("active");
         return modal;

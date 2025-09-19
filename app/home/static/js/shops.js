@@ -2,7 +2,7 @@ class ShopifySite extends JsForm {
     constructor(options) {
         super(options)
         this.target = document.querySelector(".jsapp");
-        this.shopId = options.shopId;
+        this.shopId = options.shopId||null;
         this.shopDetails = {}
         if (this.shopId!=null && this.shopId!="") {
             this.get(`/shops/load/${this.shopId}`).then(payload=>{
@@ -18,10 +18,13 @@ class ShopifySite extends JsForm {
         }
         this.render()
     }
+    closer() {
+        return ()=>this.render()
+    }
     render() {
         this.target.innerHTML = `
             <form id="siteForm" class="jsform">
-                <div><h1>Log In</h1></div>
+                <div><h1 id="formHeader">${this.formHeader()}</h1></div>
                 <div class="request-response"></div>
                 <div class="formRow">
                     <div class="formField">
@@ -79,16 +82,52 @@ class ShopifySite extends JsForm {
         })
         document.querySelector(".check-button").addEventListener("click",event=>{
             this.get(`/shops/recheck/${this.shopId}`).then(response=>{
-                console.error(response)
-                this.handleResponse(response,response.shop)
+                switch(response.status) {
+                    case 404:
+                        EscModal.show(
+                        `
+                            <h3>Warning</h3>
+                            The credientials you have supplied are incomplete. Please make sure the following scopes are enabled:
+                            <ul>${response.scopesMissing.map(scope=>`<li>${scope}</li>`).join("")}
+                        `
+                        );
+                    break;
+                    case 200:
+                        EscModal.show(
+                        `
+                            <h3>Success</h3>
+                            ${response.shop.shopName} has all the required scopes
+                                `
+                        )    
+                    break;
+                        
+                }
             })
         })
         document.querySelector(".delete-button").addEventListener("click",event=>{
+            let closeFunction = ()=>location.reload()
             this.get(`/shops/delete/${this.shopId}`).then(response=>{
-                location.reload()
+                EscModal.show(
+                    `
+                    <h4>${this.shopDetails.shopName} deleted</h4>
+                    `,
+                    {onClose:()=>{
+                        console.error
+                        location.reload()
+                    }}
+                )
+                
             })
         })
 
+    }
+    formHeader() {
+        
+        if (this.shopDetails.shopName) {
+             return `Edit ${this.shopDetails.shopName}`
+        } else{
+            return `Add Shop`
+        }
     }
     handleResponse(response,formData) {
         let crudButton = document.querySelector(".crud-button")
@@ -113,22 +152,26 @@ class ShopifySite extends JsForm {
                 )
                 break;
             case 200:
-                if (this.shopId!=null && this.shopId!="") {
-                    EscModal.show(
-                        `
-                        <h3>Success</h3>
-                        ${formData.shopName} has all the required scopes
-                        `
-                    )    
-                } else {
-                    this.setShopId(response.shop.id)
-                    EscModal.show(
-                        `
-                        <h3>Success</h3>
-                        ${formData.shopName} has been updated successfully 
-                        `
-                    )
-                }
+                
+                
+                    console.error(response)
+                    this.shopDetails = response.shop
+                    if (this.shopId==null || this.shopId=="") {
+                        this.setShopId(response.shopId)
+                        EscModal.show(
+                            `
+                            <h3>Success</h3>
+                            ${formData.shopName} processed successfully 
+                            `,
+                            {onClose:()=>location.href=`/shops?shopId=${response.shopId}`}
+                        )
+                        
+                    } else {
+                        location.href=`/shops?shopId=${response.shopId}`
+                    }
+                    
+                    
+                
                 
                 break;
         }
