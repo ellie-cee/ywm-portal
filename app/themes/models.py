@@ -1,20 +1,23 @@
 from django.db import models
-from home.models import BaseModel
 from shopify_app.models import ShopifySite
-import datetime
+from datetime import datetime
+import uuid
 
 # Create your models here.
 
-class ThemeFileUpload(BaseModel):
-    
+class ThemeFileUpload(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     themeId = models.CharField(max_length=255)
     site = models.ForeignKey(ShopifySite,on_delete=models.CASCADE,db_index=True)
     uploadDate = models.DateTimeField(default=datetime.now)
     content = models.TextField()
     contentType = models.CharField(max_length=64)
-
-class ThemeFile(BaseModel):
     
+    class Meta:
+        db_table="themeFileUpload"
+
+class ThemeFile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     folder = models.CharField(max_length=255,db_index=True)
     path = models.CharField(max_length=255,db_index=True)
     contents = models.TextField(default="")

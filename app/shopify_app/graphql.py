@@ -74,6 +74,10 @@ class GqlReturn(SearchableDict):
         if actualData is not None:
             self.data = actualData
         return SearchableDict(self.data)
+    def isUnauthorized(self):
+        if "Unauthorized" in self.errorMessages():
+            return True
+        return False
 
 
 def log(message):
@@ -95,20 +99,49 @@ def catchNetWorkError(fn):
                     retry = False
                     return ret
             except urllib.error.HTTPError as e:
+                logger.error(e.status)
+                if e.status==401:
+                    return GqlReturn(
+                        {
+                            "data":{},
+                            "errors":[
+                                {
+                                    "code":401,
+                                    "message":"Unauthorized"
+                                }
+                            ]
+                        }
+                    )
                 retryCount = retryCount + 1
                 log(f"retrying {retryCount}/10")
                 time.sleep(3)
             except urllib.error.URLError as e:
+                logger.error(e)
+                return GqlReturn(
+                        {
+                            "data":{},
+                            "errors":[
+                                {
+                                    "code":401,
+                                    "message":"Unauthorized"
+                                }
+                            ]
+                        }
+                    )
                 retryCount = retryCount + 1
                 log(f"retrying {retryCount}/10")
                 time.sleep(3)
             except http.client.RemoteDisconnected:
+                logger.error(e)
                 retryCount = retryCount + 1
                 log(f"retrying {retryCount}/10")
                 time.sleep(3)
             except KeyboardInterrupt:
                 sys.exit()
+                
             except Exception as e:
+                
+                logger.error(e.__class__)
                 retryCount = retryCount + 1
                 log(f"retrying {retryCount}/10")
                 time.sleep(3)
@@ -127,12 +160,29 @@ class GraphQL:
         
     @catchNetWorkError    
     def run(self,query,variables={},searchable=True,throttle=5000):
-        ret = json.loads(shopify.GraphQL().execute(query,variables))
+        retVal = None
+        ret = None
+        try:
+            jsonReturn = shopify.GraphQL().execute(query,variables)
+            ret = json.loads(jsonReturn)
+        except:
+            return GqlReturn(
+                {
+                    "data":{},
+                    "errors":[
+                        {
+                            "code":401,
+                            "message":"Unauthorized"
+                        }
+                    ]
+                }
+            )
         retVal = GqlReturn(ret)
         
 
         if throttle is not None:
-            if retVal.throttleRemaining()<throttle:
+            remaining = retVal.throttleRemaining()
+            if remaining<throttle and remaining>0:
                 log(f"throttling at {retVal.throttleRemaining()}")
                 time.sleep(2)
         
@@ -166,8 +216,7 @@ class GraphQlIterable(GraphQL):
                 ret.dump()
                 sys.exit()
         
-        if ret.hasErrors():
-            print(json.dumps(ret.errorMessages(),indent=1))
+        
         values = [GqlReturn(x) for x in ret.search(f"{self.dataroot}.nodes",[])]
         
         if ret.search(f"{self.dataroot}.pageInfo.hasNextPage"):

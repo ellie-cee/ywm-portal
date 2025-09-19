@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'ywm_auth.apps.AuthConfig',
     'shopify_app.apps.ShopifyAppConfig',
+    'themes.apps.ThemesConfig',
+    'anymail'
 ]
 
 MIDDLEWARE = [
@@ -65,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request'
             ],
         },
     },
@@ -125,8 +128,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+APPEND_SLASH = False
+
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend" 
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_EMAIL")  # if you don't already have this in settings
+SERVER_EMAIL = f"apps@{os.environ.get('MAIL_DOMAIN')}"  # ditto (default from-email for Django errors)
+ANYMAIL = {
+    # (exact settings here depend on your ESP...)
+    "MAILGUN_API_KEY": os.environ.get("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": os.environ.get('MAIL_DOMAIN'),  # your Mailgun domain, if needed
+}
+

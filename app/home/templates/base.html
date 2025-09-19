@@ -1,22 +1,26 @@
 <html>
     <head>
         <title>YWM Utilities: {% block title %} Dashboard{% endblock %} </title>
-        <link href="https://www.yellowwebmonkey.com/wp-content/cache/fonts/1/google-fonts/css/d/a/9/29bf8857dfd265d8a99a681b6c027.css" rel="stylesheet">
         <link rel="stylesheet" href="/static/css/site.css">
-        <link rel="stylesheet" href="/static/css/style.min.css">
+        
+        <script src="/static/js/site.js"></script>
     </head>
     <body>
+        {% include "csrf_token.html" %}
         <div class="header">
             <div class="header-img"><img src="/static/img/ywm_rectangle_brown_logo_600px.png"></div>
         </div>
     <div class="body">
         <div class="sidebar">
             {% block sidebar %}
-            {% blockend %}
+            {% endblock %}
         </div>
-        {% block content %}
-        content
-        {% blockend %}
+        <div class="main-content">
+            {% block content %}
+            content
+            {% endblock %}
+        </div>
     </div>
+    
     </body>
 </html>

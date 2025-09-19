@@ -3,14 +3,14 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.conf import settings
 from django.core import serializers
-from home.models import ShopifySite
+from shopify_app.models import ShopifySite
 from django.shortcuts import render,redirect
 
 def requiresLogin(permissionsRequired=None):
     def decorator(fn):
         def wrapper(request, *args, **kwargs):
             
-            userSession = request.session["userDetails"]
+            userSession = request.session.get("userDetails")
             if userSession is None:
                 return render(request,"login.html")
             userPermissions = userSession.get("permissions")

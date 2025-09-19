@@ -32,3 +32,145 @@
     align-items:center;
     justify-content:center;
   }
+
+  @font-face {
+    font-family: 'Super Grotesk';
+    font-style: normal;
+    font-weight: 100;
+    font-display: auto;
+    src: url('/static/css/SUPERGROTESKWEB-W03-REGULAR.woff') format('woff');
+}
+
+.header {
+    background-color: #FAEBA7;
+    padding: 12px;
+}
+.header .header-img img {
+    height:64px;
+}
+.body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-family: 'Super Grotesk';
+    height: 100%;
+}
+.main-content {
+    margin: auto;
+    margin-top:64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.error_message {
+    color: #f00;
+    font-weight: bold;
+    font-size: medium;
+}
+input,button {
+  border-radius:0px;
+  padding: 8px 4px;
+  font-size:12px!important;
+  border-color: #888!important;
+  border: 1px solid #888;
+  width:100%;
+  margin: 4px;
+}
+button {
+  background-color: #478AAD;
+  color: #fff;
+  border: 0px;
+  cursor: pointer;
+}
+button:disabled {
+  background-color: #888;
+  color:#bbb;
+}
+.request-response {
+  border-top: 1px solid #888;
+  border-bottom: 1px solid #888;
+  margin: 16px;
+  padding: 8px;
+}
+.request-response.error {
+  color:#900;
+  font-weight: 800;
+}
+.request-response:empty {
+  display:none;
+}
+button.link {
+  border: none;
+  font-weight: 300;
+  cursor: pointer;
+  background-color: transparent;
+  padding: 0px;
+  color: #000;
+}
+form.jsform {
+  min-width:640px;
+  width:85%;
+}
+.formfooter .buttons {
+  display: flex;
+  justify-content: space-around;
+  gap:16px;
+}
+.formrow {
+  display: flex;
+  gap: 16px;
+}
+.formrow .formField {
+  display:flex;
+  flex-direction: column;
+  gap:8px;
+  width:100%;
+}
+.sidebar {
+  background-color: #ffffdd;
+  min-width: 200px;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height:100%;
+}
+.sidebar:empty {
+  display: none;
+}
+ul.sidebar {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height:100%
+
+}
+ul.sidebar li {
+  background-color:#00000011;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+ul.sidebar li.header {
+  background-color: #478AAD;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+.hidden {
+  display: none;
+}
+.labelledInput {
+  display:flex;
+  gap:2px;
+  align-items:center
+}
+.peeker {
+  cursor: pointer;
+}
+button.delete-button {
+  background-color: #800;
+}

@@ -1,5 +1,10 @@
-{% extends "home/base.html" %}
+{% extends "base.html" %}
 {% block content%}
+<script src="/static/js/login.js"></script>
 <div class="centered">
+    <div class="jsapp"</div>
 </div>
+<script>
+    const loginForm = new Login({loginState:"{{ request.session.AUTHORIZATION_REQUEST }}"})
+</script>
 {% endblock %}

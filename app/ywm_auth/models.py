@@ -1,40 +1,83 @@
+import os
+import uuid
 from django.db import models
 from datetime import datetime,timedelta
 import random
-from home.models import BaseModel
+import pytz
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+utc = pytz.UTC
+
 
 # Create your models here.
 
-class UserPermissions(BaseModel):
-    name = models.CharField(max_length=64,db_index=True)
+class UserPermissions(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
+    name = models.CharField(max_length=255,db_index=True)
     
     class Meta:
         db_table = "user_permission"
 
 
-class User(BaseModel):
+class User(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     name = models.TextField(default="No Name")
     email = models.EmailField(db_index=True)
     permissions = models.ManyToManyField(UserPermissions)
     
     def hasPermission(self,permission):
-        
+        return True
         if self.permissions.filter(name=permission)>0:
             return True
         return False
-    def createAuth(self):
-        auth = AuthRequest(
-            user=self,
-            expires=datetime.now()+timedelta(minutes=60),
-            code=AuthRequest.generateCode()
+    def createAuth(self,authRequest=None):
+        if authRequest is None:
+            authRequest = AuthRequest(
+                requestUser=self,
+                expires=datetime.now()+timedelta(minutes=60),
+                
+            )
+        authRequest.code = AuthRequest.generateCode()
+        authRequest.expires = datetime.now()+timedelta(minutes=60)
+        authRequest.save()
+        self.sendAuthEmail(authRequest)
+        
+        return authRequest
+    def sendAuthEmail(self,authRequest):
+        
+        msg = EmailMultiAlternatives(
+            "Your YWM Login Code",
+            render_to_string(
+                "authcode.txt",
+                {
+                    "authCode":authRequest.code,
+                    "user":self
+                }
+            ),
+            os.environ.get("DEFAULT_EMAIL"),
+            [self.email],
         )
-        auth.save()
-        return auth
+        msg.attach_alternative(
+            render_to_string(
+                "authcode.html",
+                {
+                    "authCode":authRequest.code,
+                    "user":self
+                }
+            ),
+            "text/html"
+        )
+        msg.send()
+        
+    def censoredEmail(self):
+        return f"{self.email[0:3]}***@{self.email.split("@")[-1]}"
     class Meta:
         db_table="ywm_user"
 
-class AuthRequest(BaseModel):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+class AuthRequest(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
+    requestUser = models.ForeignKey(User,on_delete=models.CASCADE)
     code = models.CharField(max_length=64,db_index=True)
     expires = models.DateTimeField()
     
@@ -42,7 +85,7 @@ class AuthRequest(BaseModel):
     def generateCode():
         return "".join([str(random.randint(0,9)) for x in range(6)])
     def isExpired(self):
-        return self.expires<datetime.now()
+        return self.expires.replace(tzinfo=utc)<datetime.now().replace(tzinfo=utc)
     def matches(self,supliedCode):
         return self.code==supliedCode
     

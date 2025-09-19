@@ -8,21 +8,45 @@ class Esc {
     constructor(options) {
         this.config = {...this.defaults(),...options}
     }
-    async post(url,content) {
-        return window.fetch(
+    async get(url) {
+        return fetch(
             url,
             {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
                 },
-                body:JSON.stringify(content)
+            }
+        ).then(response=>response.json())
+    }
+    async postRaw(url,body) {
+        try {
+        return fetch(
+            url,
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                },
+                body:body
             }
         )
-        .then(response=>response.json())
+        } catch(e) {
+            console.error(e)
+        }
     }
+    async post(url,payload) {
+        return this.postRaw(
+            url,
+            JSON.stringify(payload)
+        ).then(response=>response.json())
+    }
+    
+
 
     gid2id(gid) {
         return parseInt(gid.split("/").pop())
@@ -82,3 +106,26 @@ class EscModal extends Esc {
     return modal
     }
 }
+
+class JsForm extends Esc {
+    constructor(options) {
+        super(options)
+    }
+    messageElement() {
+        return document.querySelector(".request-response")
+    }
+    showError(message) {
+        let footer = this.messageElement()
+        footer.classList.add("error")
+        footer.textContent=message;
+    }
+    showMessage(message) {
+        let footer = this.messageElement()
+        footer.classList.remove("error")
+        footer.textContent=message;
+    }
+    serializeForm(form) {
+        return Object.fromEntries(new FormData(form).entries())
+    }
+}
+

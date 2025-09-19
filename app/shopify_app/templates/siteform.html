@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content%}
+<style type="text/css">
+    button.requires-id {
+        display:none;
+    }
+    form:has(input[name="shopId"]) button.requires-id {
+        display:block;
+    }
+</style>
+<script src="/static/js/shops.js"></script>
+<div class="centered">
+    <div class="jsapp"</div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded",event=>{
+        document.querySelectorAll("li[data-shop-id]").forEach(li=>{
+            li.addEventListener("click",event=>{
+                window.shopForm = new ShopifySite({shopId:li.dataset.shopId})
+            })
+        })
+    });
+    document.querySelector("[data-create-shop]").addEventListener("click",event=>{
+        window.shopForm = new ShopifySite({});
+    })
+    // const 
+    
+</script>
+{% endblock %}
+{% block sidebar %}
+<ul class="sidebar">
+    <li class="header">Shopify</li>
+    {% for shop in shops %}
+        <li data-shop-id="{{ shop.id}}">
+            {{ shop.shopName }}
+        </li>
+
+    {% endfor %}
+    <li data-create-shop="">Add Shop</li>
+</ul>
+{% endblock%}

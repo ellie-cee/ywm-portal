@@ -4,8 +4,8 @@ def authorizedScopes(appKey):
     appScopes = GraphQL().run(
             """
             query getScopes($key:String!) {
-                appByKey($key) {
-                    availableAccessScopes {
+                appByKey(apiKey:$key) {
+                    requestedAccessScopes {
                         handle
                     }
                 }
@@ -15,7 +15,8 @@ def authorizedScopes(appKey):
                 "key":appKey
             }
         )
-    return [x.get("handle") for x in appScopes.search("data.appByKey.availableAccessScopes")]
+    appScopes.dump()
+    return [x.get("handle") for x in appScopes.search("data.appByKey.requestedAccessScopes")]
 
 def getThemes():
     themes = []
