@@ -26,7 +26,7 @@ class Login extends JsForm {
     
     renderLoginForm() {
         this.target.innerHTML = `
-            <form id="loginForm" class="jsform">
+            <form id="loginForm" class="jsform loginforms">
                 <div><h1>Log In</h1></div>
                 <div class="request-response"></div>
                 <div>
@@ -60,7 +60,7 @@ class Login extends JsForm {
     }
     renderCodeForm(payload) {
         this.target.innerHTML = `
-            <form id="validateCode" class="jsform">
+            <form id="validateCode" class="jsform loginforms">
                 <div><h1>Log In</h1></div>
                 <div>Please enter the code sent to ${payload.userEmail}</div>
                 <div class="request-response"></div>

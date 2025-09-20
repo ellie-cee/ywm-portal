@@ -1,10 +1,21 @@
-iCHECKLIST
+CHECKLIST
+
 
 
 setup pip env
+    sudo apt install pip  pipenv
 set up MySQL/MariaDB
+    create database <database>
+    grant all privileges in <database>.* to '<user>'@'localhost' identified by '<password>'
 set up nginx
-set up letsencrypt
+
+adduser ywm:ywm
+add SSH keys to /home/ywm
+mk /etc/enginx/sites-enabled/ywm.conf
+mkdir /var/www/ywm
+temp chown ywm:ywm /var/www/ywmclone repo
+update .env
+pipenv install
 
 set up uwsgi.ini:
 
@@ -18,6 +29,17 @@ set up uwsgi.ini:
     buffer-size =  65535
     vacuum = true
     die-on-term = true
+
+setup domain:
+    add cname
+
+setup letsencrypt
+    install certbot (apt install certbot)
+    sudo certbot --nginx
+
+
+
+
 
 set up systemd
 
@@ -37,8 +59,11 @@ set up systemd
 
 sudo systemctl daemon-reload
 sudo systemctl enable ywm_qs.service
-sudo systemctl start ywm_qs.service
 
+
+chown -R ywm:ywm .
+
+sudo systemctl start ywm_qs.service
 
 
 let her rip: pipenv run uwsgi --chdir=/home/ellie/workspace/freelance/app/ywm-quickstart/app --module=ywm_qs.wsgi:application --env=DJANGO_SETTINGS_MODULE=ywm_qs.settings --http-socket=127.0.0.1:8000 -b 65535

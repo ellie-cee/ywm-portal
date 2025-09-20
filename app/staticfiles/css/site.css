@@ -321,3 +321,8 @@ a {
     justify-content: flex-start;
     width: 100%;
 }
+
+.loginforms {
+  width:640px!important;
+  margin:auto;
+} 
