@@ -80,7 +80,7 @@ def checkScopes(request,shopifySite=None):
         status=200
     )
 def loadSite(request,shopId):
-    print(shopId)
+    
     try:
         shopifySite = ShopifySite.objects.get(id=shopId)
         return jsonResponse(

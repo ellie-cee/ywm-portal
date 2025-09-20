@@ -9,33 +9,28 @@
     }
 </style>
 <script src="/static/js/shops.js"></script>
-<div class="centered">
+<div class="content-with-sidebar">
+    <div class="listing">
+        <ul class="sidebar-options">
+            {% for shop in shops %}
+                <li data-shop-id="{{ shop.id}}">
+                    <a href="shops?shopId={{ shop.id }}">{{ shop.shopName }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <div><a href="/shops">New Shop</a></div>
+    </div>
     <div class="jsapp"</div>
 </div>
+
+</div>
 <script>
-    document.addEventListener("DOMContentLoaded",event=>{
-        document.querySelectorAll("li[data-shop-id]").forEach(li=>{
-            li.addEventListener("click",event=>{
-                window.shopForm = new ShopifySite({shopId:li.dataset.shopId})
-            })
-        })
-    });
+    document.addEventListener("DOMContentLoaded",event=>{        
     window.shopForm = new ShopifySite({
         "shopId":"{{ request.GET.shopId }}"
     });
     // const 
+});
     
 </script>
 {% endblock %}
-{% block sidebar %}
-<ul class="sidebar">
-    <li class="header">Shopify</li>
-    {% for shop in shops %}
-        <li data-shop-id="{{ shop.id}}">
-            {{ shop.shopName }}
-        </li>
-
-    {% endfor %}
-    <li ><a href="/shops">New Shop</a></li>
-</ul>
-{% endblock%}

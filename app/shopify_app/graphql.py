@@ -16,8 +16,7 @@ class GqlReturn(SearchableDict):
         if not hasattr(self,"errorDetails"):
             errorDetails = self.findErrors(self.data)
             setattr(self,"errorDetails",errorDetails)
-            if dump:
-                print(json.dumps(errorDetails,indent=1),file=sys.stderr)
+            
                
         return self.errorDetails
         
@@ -81,6 +80,7 @@ class GqlReturn(SearchableDict):
 
 
 def log(message):
+    logger.error(message)
     print(message,flush=True)
 
 def catchNetWorkError(fn):

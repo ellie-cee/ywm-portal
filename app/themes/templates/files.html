@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content%}
+<style type="text/css">
+    button.requires-id {
+        display:none;
+    }
+    form:has(input[name="shopId"]) button.requires-id {
+        display:block;
+    }
+</style>
+<script src="/static/js/files.js"></script>
+<div class="content-with-sidebar">
+    <div class="listing">
+            {% if themeList|length > 1 %}
+                <select name="themes">
+                    {% for theme in themeList %}
+                        <option value="{{ theme.id}}" {% if theme.id == collectionId%}selected{% endif%}>{{ theme.name }}</option>
+                    {% endfor%}
+                </select>
+            {% else %}
+                <input type="hidden" name="globalThemeList" value="{{ collectionId }}">
+            {% endif %}
+        
+
+        <ul class="sidebar-options files">
+            
+        </ul>
+        <div class="buttons">
+            <button data-create-type="create">Create</button>
+            <button data-create-type="upload">Upload</button>
+        </div>
+    </div>
+    <div class="jsapp"></div>
+</div>
+
+</div>
+<script>
+    window.collectionId = "{{ collectionId }}"
+    document.addEventListener("DOMContentLoaded",event=>{   
+        {% if request.GET.fileId %}
+            window.fileEditor = new ThemeFileEditor({fileId:"{{request.GET.fileId}}"})
+        {% else %}
+            loadFolders(null,window.collectionId)
+        {% endif %}
+            
+        
+    });
+    const loadFolders = (fileId,collectionId)=> {
+        
+        window.fetch(`/files/folders/${collectionId}`).then(response=>response.json()).then(response=>{
+            
+            renderFolders(response,fileId)
+        })
+    }
+    const renderFolders = (response,fileId)=>{
+        let filesList = document.querySelector("ul.sidebar-options.files");
+        if (filesList) {
+            filesList.innerHTML = response.files.map(folder=>`
+                <li class="folder open" data-collection-id="${collectionId}"">
+                    <div class="iconDiv">
+                        <div><img src="/static/img/folder.png"></div>
+                        <div>${folder.folder}</div>
+                    </div>
+                    <ul class="fileList">
+                    ${folder.files.map(file=>`
+                        <li class="file ${file.id==fileId?'selected':''}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
+                            <div class="iconDiv">
+                                <div>
+                                    <img src="/static/img/${file.binaryFile?'file-binary.png':'file-text.png'}">
+                                </div>
+                                <div>
+                                    ${file.fileName}
+                                </div>
+                            </div>
+                        </li>`).join('')}
+                </ul>
+            </li>`).join("")
+        }
+        document.querySelectorAll("li.folder").forEach(folder=>{
+            folder.addEventListener("click",event=>folder.classList.toggle("open"))
+            folder.querySelectorAll("li.file").forEach(file=>file.addEventListener("click",event=>{
+                event.stopPropagation()
+                if (file.dataset.binary=="false") {
+                    
+                    window.fileEditor = new ThemeFileEditor({fileId:file.dataset.fileId})        
+                }
+            }))
+        })
+    }
+
+    document.querySelector(`[data-create-type="create"]`).addEventListener("click",event=>window.fileEditor = new ThemeFileEditor({collectionId:window.collectionId}))
+    
+    document.addEventListener("ywm:folders:load",(event=>{
+        console.error("wat")
+        console.error(event.detail)
+        loadFolders(event.detail.fileId,event.detail.collectionId)
+    }))
+</script>
+{% endblock %}

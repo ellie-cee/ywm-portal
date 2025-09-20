@@ -1,0 +1,13 @@
+[Unit]
+    Description=uWSGI instance to serve YWM quickstart
+    After=network.target
+
+    [Service]
+    User=ellie
+    Group=ellie
+    WorkingDirectory=/home/ellie/workspace/freelance/ywm_quickstart/app
+    ExecStart=/usr/local/bin/pipenv run uwsgi --ini uwsgi.ini
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target

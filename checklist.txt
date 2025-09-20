@@ -1,0 +1,45 @@
+iCHECKLIST
+
+
+setup pip env
+set up MySQL/MariaDB
+set up nginx
+set up letsencrypt
+
+set up uwsgi.ini:
+
+[uwsgi]
+    chdir = /home/ellie/workspace/freelance/app/ywm-quickstart/app
+    module = ywm_qs.wsgi:application
+    env = DJANGO_SETTINGS_MODULE=ywm_qs.settings
+    master = true
+    processes = 4
+    http-socket = 127.0.0.1:8000
+    buffer-size =  65535
+    vacuum = true
+    die-on-term = true
+
+set up systemd
+
+[Unit]
+    Description=uWSGI instance to serve YWM quickstart
+    After=network.target
+
+    [Service]
+    User=ellie
+    Group=ellie
+    WorkingDirectory=/home/ellie/workspace/freelance/ywm_quickstart/app
+    ExecStart=/usr/local/bin/pipenv run uwsgi --ini uwsgi.ini
+    Restart=always
+
+    [Install]
+    WantedBy=multi-user.target
+
+sudo systemctl daemon-reload
+sudo systemctl enable ywm_qs.service
+sudo systemctl start ywm_qs.service
+
+
+
+let her rip: pipenv run uwsgi --chdir=/home/ellie/workspace/freelance/app/ywm-quickstart/app --module=ywm_qs.wsgi:application --env=DJANGO_SETTINGS_MODULE=ywm_qs.settings --http-socket=127.0.0.1:8000 -b 65535
+

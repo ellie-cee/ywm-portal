@@ -59,7 +59,7 @@
 }
 .main-content {
     margin: auto;
-    padding:16px;
+    
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
@@ -71,7 +71,7 @@
     font-weight: bold;
     font-size: medium;
 }
-input,button,select {
+input,button,select,textarea {
   border-radius:0px;
   padding: 8px 4px;
   font-size:12px!important;
@@ -144,31 +144,39 @@ form.jsform {
 .sidebar:empty {
   display: none;
 }
-ul.sidebar {
+ul.sidebar-menu {
   list-style: none;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  height:100%;
+  padding:0px;
+  
   margin:0px;
 
-}
-ul.sidebar li {
-  background-color:#00000011;
-  padding: 8px;
-  display: flex;
-  justify-content: center;
-  font-weight: bold;
-  cursor: pointer;
-}
-ul.sidebar li a {
-  text-decoration: none;
-  color: #000;
-}
-ul.sidebar li.header {
-  background-color: #478AAD;
-  color: #ffffff;
-  margin-bottom: 8px;
+  li {
+    background-color:#00000011;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    a {
+      text-decoration: none;
+      color: #000;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  }
+  li:hover {
+    background-color: #dddddd;
+  }
+  li.header {
+    background-color: #478AAD;
+    color: #ffffff;
+    margin-bottom: 8px;
+  }
+  
+
 }
 .hidden {
   display: none;
@@ -184,34 +192,132 @@ ul.sidebar li.header {
 button.delete-button {
   background-color: #800;
 }
-
 .dashboard {
   
-  /*display: grid;*/
-  /*grid-template-columns: 50% 50%;*/
   display: flex;
   
   gap: 24px;
   flex-direction: row;
   flex-wrap: wrap;
-}
-.dashboardCell {
-  width:85%;
+  padding: 16px;
+  .dashboardCell {
+    width:85%;
+  
+    min-height: 120px;
+    border-radius: 5px;
+    background-color: #ffffdd;
+    padding: 2px 8px 8px 2px;
+    display: flex;
+    width:45%;
+    gap:8px;
+    flex-direction: column;
 
-  min-height: 120px;
-  border-radius: 5px;
-  background-color: #ffffdd;
-  padding: 2px 8px 8px 2px;
-  display: flex;
-  width:45%;
-  gap:8px;
-  flex-direction: column;
+    .label {
+      font-weight: 900;
+      display: flex;
+      justify-content: center;
+      padding: 4px;
+      border-bottom: 1px solid #0005;
+    
+    }
+  }
+  
 }
-.dashboardCell .label {
-  font-weight: 900;
+.content-with-sidebar {
   display: flex;
-  justify-content: center;
-  padding: 4px;
-  border-bottom: 1px solid #0005;
+  gap:18px;
+  align-items: flex-start;
+  width:100%;
+  justify-content: space-between;
+  height:100%;
+  .buttons {
+    display: flex;
+    gap:4px;
+    width:100%;
+  }
+  .listing {
+    border-right: 1px solid #cccccc;
+    width: 25%;
+    max-width:320px;
+    height: 100%;
+    display: flex;
+    gap:16px;
+    flex-direction: column;
+    align-items: flex-start ;
+    .sidebar-options {
+      margin:0px;
+      list-style: none;
+      padding: 0px;
+      margin-top: 16px;
+      max-height: 75%;
+      overflow:auto;
+      
+      white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+      white-space: -pre-wrap; /* Opera 4-6 */
+      white-space: -o-pre-wrap; /* Opera 7 */
+      word-wrap: break-word; /* Internet Explorer 5.5+ */
+      
+      li {
+        
+        margin: 0px;
+        padding:8px;
+      }
+      li:hover a {
+        color:#000099;
+      }
+  
+      width: 100%;
+    }
+    .sidebar-options.files {
+      padding-left: 0px;
+      margin:0px
+    }
+    .iconDiv {
+      display:flex;
+      gap: 8px;
+    }
+    li.folder {
+      
+      cursor: pointer;
+      
+      ul.fileList {
+        display: none;
+        list-style: none;
+        margin: 0px;
+        margin-top: 8px;
+        padding:0px;
+        padding-left: 0px;
+        li:hover {
+          font-weight: bold;
+        }
+      }
+      
+    }
+    li.folder.open {
+      ul.fileList {
+        display:block;
+      }
+    }
 
+  }
+  
+  a {
+    justify-content: flex-start;
+    padding: 8px;
+  }
+
+}
+
+.fileText {
+  min-height:300px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.content-with-sidebar .jsapp {
+  display: flex;
+    justify-content: flex-start;
+    width: 100%;
 }

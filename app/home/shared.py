@@ -2,6 +2,9 @@ import sys
 from jmespath import search as jpath
 import json
 from dict_recursive_update import recursive_update
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SearchableDict:
@@ -32,7 +35,8 @@ class SearchableDict:
             return ret
     def dump(self,printIt=True):
         if printIt:
-            print(json.dumps(self.data,indent=1),file=sys.stderr)
+            logger.info(json.dumps(self.data,indent=1))
+            
         else:
             return self.data
     def set(self,key,value):
@@ -71,9 +75,10 @@ class SearchableDict:
     def dumpField(self,path):
         ret = self.search(path)
         if ret is None:
-            print("None")
+            pass
         else:
             if isinstance(ret,dict) or isinstance(ret,list):
-                print(json.dumps(ret,indent=1))
+                logger.info(json.dumps(ret,indent=1))
+                
             else:
-                print(ret)
+                logger.info(ret)

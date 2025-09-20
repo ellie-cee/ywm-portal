@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from ywm_auth.decorators import requiresLogin
 from django.http import HttpResponse
@@ -11,7 +12,7 @@ logger = logging.Logger(__name__)
 
 @requiresLogin()
 def dashboard(request):
-    logger.error(request.session.get("userDetails"))
+    
     return render(
         request,
         "dashboard.html",

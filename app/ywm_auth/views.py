@@ -89,10 +89,7 @@ def getActiveRequest(request):
 
 def logout(request):
     request.session.clear()
-    return render(
-        request,
-        "loggedout.html"
-    )
+    return redirect("/")
 
 def validate(request):
     
