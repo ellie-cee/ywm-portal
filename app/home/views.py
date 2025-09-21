@@ -4,6 +4,7 @@ from ywm_auth.decorators import requiresLogin
 from django.http import HttpResponse
 import json
 import logging
+from django.conf import settings
 
 logger = logging.Logger(__name__)
 
@@ -13,6 +14,7 @@ logger = logging.Logger(__name__)
 @requiresLogin()
 def dashboard(request):
     logger.error(__debug__)
+    logger.error(settings.DEBUG)
     return render(
         request,
         "dashboard.html",
