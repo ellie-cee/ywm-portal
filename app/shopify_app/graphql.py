@@ -81,7 +81,7 @@ class GqlReturn(SearchableDict):
 
 def log(message):
     logger.error(message)
-    print(message,flush=True)
+    
 
 def catchNetWorkError(fn):
     def wrapper(self, *args, **kwargs):
