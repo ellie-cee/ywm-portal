@@ -1,4 +1,4 @@
 .env
 *.pyc
 *.sql
-app/uwsgi.conf
+app/uwsgi.ini
