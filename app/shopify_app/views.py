@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.forms.models import model_to_dict
 
 from home.views import jsonResponse,getJsonPayload
+from ywm_auth.decorators import requiresLogin
 from .models import ShopifySite
 
 # Create your views here.
@@ -12,6 +13,7 @@ def checkLogin(request):
 def checkPermissions(request):
     pass
 
+@requiresLogin
 def index(request):
     return render(
         request,
@@ -20,13 +22,14 @@ def index(request):
             "shops":ShopifySite.objects.order_by("shopName").all()
         }
     )
+@requiresLogin
 def create(request):
     return render(
         request,
         "siteform.html",
         {}
     )
-
+@requiresLogin
 def upsertSite(request):
     payload = getJsonPayload(request)
     
@@ -54,10 +57,12 @@ def upsertSite(request):
        shop.save()
     return checkScopes(request,shopifySite=shop)
 
+@requiresLogin
 def recheckScopes(request,shopId):
     shopifySite = ShopifySite.objects.get(id=shopId)
     return checkScopes(request,shopifySite=shopifySite)
 
+@requiresLogin
 def checkScopes(request,shopifySite=None):
     if shopifySite is None:
         payload = getJsonPayload(request)
@@ -79,6 +84,7 @@ def checkScopes(request,shopifySite=None):
         },
         status=200
     )
+@requiresLogin
 def loadSite(request,shopId):
     
     try:
@@ -93,6 +99,7 @@ def loadSite(request,shopId):
             {"message":"Not found"},
             404
         )
+@requiresLogin
 def deleteSite(request,shopId):
     try:
         ShopifySite.objects.get(id=shopId).delete()
@@ -103,6 +110,7 @@ def deleteSite(request,shopId):
         {"message":"deleted"},
         200
     )
+@requiresLogin
 def listSites(request):
     return jsonResponse(
         {
@@ -110,6 +118,8 @@ def listSites(request):
         },
         200
     )
+    
+@requiresLogin
 def listThemes(request):
     shopifySite = ShopifySite.objects.last()
     return jsonResponse(

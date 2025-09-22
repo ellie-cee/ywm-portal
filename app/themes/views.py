@@ -2,9 +2,11 @@ from django.shortcuts import render
 from .models import ThemeFile,ThemeCollection
 from home.views import jsonResponse,getJsonPayload
 import mimetypes
+from ywm_auth.decorators import requiresLogin
 
 # Create your views here.
 
+@requiresLogin
 def home(request):
     collectionId = ThemeCollection.objects.values_list("id")[0][0]
     return render(
@@ -14,7 +16,7 @@ def home(request):
             "collectionId":collectionId
         }   
     )
-    
+@requiresLogin
 def showFiles(request,collectionId):
     collection:ThemeCollection = ThemeCollection.objects.get(id=collectionId)
     return jsonResponse(
@@ -24,6 +26,7 @@ def showFiles(request,collectionId):
         },
         200   
     )
+@requiresLogin
 def loadFile(request,fileId):
     
     file = ThemeFile.objects.get(id=fileId)
@@ -31,7 +34,8 @@ def loadFile(request,fileId):
         file.toDict(),
         status=200
     )
-    
+
+@requiresLogin
 def upsert(request):
     payload = getJsonPayload(request)
     created = False

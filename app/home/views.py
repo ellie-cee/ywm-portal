@@ -11,7 +11,7 @@ logger = logging.Logger(__name__)
 
 # Create your views here.
 
-@requiresLogin()
+@requiresLogin
 def dashboard(request):
     logger.error(__debug__)
     logger.error(settings.DEBUG)
