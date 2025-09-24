@@ -7,4 +7,5 @@ from ywm_auth.models import UserPermissions
 
 admin.site.register(User)
 admin.site.register(SiteNav)
+admin.site.register(UserPermissions)
 
