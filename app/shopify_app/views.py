@@ -120,11 +120,11 @@ def listSites(request):
     )
     
 @requiresLogin
-def listThemes(request):
-    shopifySite = ShopifySite.objects.last()
+def listThemes(request,shopId):
+    shopifySite = ShopifySite.objects.get(id=shopId)
     return jsonResponse(
         {
-            "shopList":[{"id":theme.get("id"),"name":theme.get("name")} for theme in shopifySite.getThemes()]
+            "themeList":[{"themeId":theme.get("id"),"name":theme.get("name")} for theme in shopifySite.getThemes()]
         },
         200
     )

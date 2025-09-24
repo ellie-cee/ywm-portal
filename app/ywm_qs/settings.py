@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'ywm_auth.apps.AuthConfig',
     'shopify_app.apps.ShopifyAppConfig',
     'themes.apps.ThemesConfig',
+    'deployments.apps.DeploymentsConfig',
     'anymail'
 ]
 

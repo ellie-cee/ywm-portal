@@ -7,5 +7,7 @@ urlpatterns = [
     path('files/inCollection/<str:collectionId>',views.showFiles),
     path('files/load/<str:fileId>',views.loadFile),
     path('files/upsert',views.upsert),
-    path('files/folders/<str:collectionId>',views.showFiles)
+    path('files/folders/<str:collectionId>',views.showFiles),
+    path('files/delete/<str:fileId>',views.deleteFile),
+    
 ]

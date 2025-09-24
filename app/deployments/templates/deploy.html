@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content%}
+<style type="text/css">
+    button.requires-id {
+        display:none;
+    }
+    form:has(input[name="shopId"]) button.requires-id {
+        display:block;
+    }
+    button[data-action-type="deploy"] {
+        display:none;
+    }
+    .listing:has(input:checked) button[data-action-type="deploy"] {
+        display:block;
+    }
+</style>
+<script src="/static/js/files.js"></script>
+<script src="/static/js/deploy.js"></script>
+<div class="content-with-sidebar">
+    <div class="listing">
+            {% if themeList|length > 1 %}
+                <select name="themes">
+                    {% for theme in themeList %}
+                        <option value="{{ theme.id}}" {% if theme.id == collectionId%}selected{% endif%}>{{ theme.name }}</option>
+                    {% endfor%}
+                </select>
+            {% else %}
+                <input type="hidden" name="globalThemeList" value="{{ collectionId }}">
+            {% endif %}
+        
+            <div class="sidebarHolder">
+            
+            </div>
+        
+    </div>
+    <div class="centered">
+        <div class="jsapp"></div>
+    </div>
+</div>
+
+</div>
+<script>
+    window.collectionId = "{{ collectionId }}"
+    const folders = new FileFolders({
+        fileId:"{{ request.GET.fileId }}",
+        collectionId:window.collectionId,
+        nolink:true,
+    })
+    
+    window.deployer = new ThemeFilesDeploy(
+        {
+            selectedFiles:"{{ files | escapejs }}",
+            shops:'{{ shops | escapejs }}'
+        }
+    )
+</script>
+{% endblock %}

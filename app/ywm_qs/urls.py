@@ -26,4 +26,5 @@ urlpatterns = [
     path("",include("home.urls")),
     path("",include("shopify_app.urls")),
     path("",include("themes.urls")),
+    path("",include("deployments.urls")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

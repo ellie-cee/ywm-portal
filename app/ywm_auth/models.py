@@ -16,6 +16,9 @@ class UserPermissions(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     name = models.CharField(max_length=255,db_index=True)
     
+    def __str__(self):
+        return self.name
+    
     class Meta:
         db_table = "user_permission"
 
@@ -25,6 +28,9 @@ class User(models.Model):
     name = models.TextField(default="No Name")
     email = models.EmailField(db_index=True)
     permissions = models.ManyToManyField(UserPermissions)
+    
+    def __str__(self):
+        return f"{self.name} ({self.email})"
     
     def hasPermission(self,permission):
         return True

@@ -10,5 +10,5 @@ urlpatterns = [
     path("shops/upsert",views.upsertSite),
     path("shops/recheck/<str:shopId>",views.recheckScopes),
     path("shops/list",views.listSites),
-    path("shops/themes",views.listThemes)
+    path("shops/themes/<str:shopId>",views.listThemes)
 ]

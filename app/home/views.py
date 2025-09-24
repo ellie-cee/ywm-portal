@@ -20,6 +20,10 @@ def dashboard(request):
         "dashboard.html",
         {}
     )
+def logJson(payload):
+    logger.error(
+        json.dumps(payload,indent=1)
+    )
 def jsonResponse(payload,status=200):
     payload["status"] = status
     return HttpResponse(

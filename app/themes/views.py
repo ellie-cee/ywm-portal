@@ -34,13 +34,22 @@ def loadFile(request,fileId):
         file.toDict(),
         status=200
     )
-
+@requiresLogin
+def deleteFile(request,fileId):
+    themeFile = ThemeFile.objects.get(id=fileId)
+    themeFile.delete()
+    return jsonResponse(
+        {
+            "message":f"{themeFile.fileName} deleted",
+        },
+        200
+    )
 @requiresLogin
 def upsert(request):
     payload = getJsonPayload(request)
     created = False
     file = None
-    fileId = payload.get("fileId")
+    fileId = payload.get("objectId")
     if fileId is None:
         file = ThemeFile()
         created = True

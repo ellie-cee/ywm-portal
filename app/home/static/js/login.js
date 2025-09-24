@@ -2,120 +2,154 @@ class Login extends JsForm {
     constructor(options) {
         super(options)
         this.options = options;
-        this.target = document.querySelector(".jsapp");
+        this.loginState = "login"
+        this.loginPayload = {}
+        this.render(false)
         this.post(
             "/auth/login/status",
             {}
         ).then(response=>{
-            console.error(response)
+            this.loginPayload = response;
             switch(response.status) {
                 case 404:
-                    this.renderLoginForm()
+                    this.loginState = "login";
                     break;
                 case 200:
-                    this.renderCodeForm(response)        
+                    this.loginState = "verify";
                     break;
                 case 302:
-                    location.ref = response.url;
+                    if (this.options.redirectTo) {
+                        location.href = this.options.redirectTo;
+                    }
+                    location.href = "/";
+                    return;
                 default:
-                    this.renderLoginForm()
+                   this.loginState = "login"
             }
+            this.render()
         })
-        let state = sessionStorage.getItem("loginState")
     }
     
-    renderLoginForm() {
-        this.target.innerHTML = `
-            <form id="loginForm" class="jsform loginforms">
-                <div><h1>Log In</h1></div>
-                <div class="request-response"></div>
-                <div>
-                    <input type="email" placeholder="Enter your email address" name="email" required="true">
-                    <button class="login-button">Log In</button>
-                </div>
-                
-                <div class="formfooter"></div>
-            </form>
-        `
-        document.querySelector("#loginForm").addEventListener("submit",event=>{
-            event.preventDefault()
-            this.post(
-                "/auth/login",
-                this.serializeForm(event.target)
-            ).then(response=>{
-                switch(response.status) {
-                    case 200:
-                        this.renderCodeForm(response)
-                        break;
-                    case 302:
-                        location.href="/";
-                    case 404:
-                        this.showError(response.message)
-                        break;
-                }
-            })
-            
-            console.error(payload)
-        })
+    formName() {
+        return "loginForm"
     }
-    renderCodeForm(payload) {
-        this.target.innerHTML = `
-            <form id="validateCode" class="jsform loginforms">
-                <div><h1>Log In</h1></div>
-                <div>Please enter the code sent to ${payload.userEmail}</div>
-                <div class="request-response"></div>
-                <div>
-                    <input type="text" placeholder="Enter login code" name="authCode" required="true">
-                    <button class="validate-button">Validate Code</button>
-                </div>
-                
-                <div class="formfooter">
-                    <div class="buttons">
-                        <button class="link codes" data-type="resend">Resend Code</button>
-                        <button class="link codes" data-type="restart">User a different email address</button>
-                    </div>
-                </div>
-            </form>
-        `
-        document.querySelector("#validateCode").addEventListener("submit",event=>{
-            event.preventDefault();
-            this.post(
-                "auth/code/validate",
-                this.serializeForm(event.target)
-            ).then(response=>{
+    formContents() {
+        if (this.loginState=="login") {
+            return  `
+            <input type="email" placeholder="Enter your email address" name="email" required="true">
+            `
+        } else {
+            return `
+                <input type="text" placeholder="Enter login code" name="authCode" required="true">
+            
+            `
+        }
+    }
+    buttons() {
+        if (this.loginState=="login") {
+            return [
+                [
+                    {label:"Login In",action:"log-in",type:"submit"}
+                ]
+            ]
+        } else {
+            return [
+                [{label:"Verify",action:"verify-code",type:"submit"}],
+                [
+                    {"label":"Resend Code",action:"resend-code"},
+                    {"label":"User Another Email",action:"restart-login"}
+                ]
+            ]
+
+        }
+    }
+    setupEvents() {
+        super.setupEvents();
+        
+        this.listenFor(
+            "log-in",
+            
+            (event)=>{
+                this.loaded(false)
+                this.post(
+                    "/auth/login",
+                    this.serializeForm(this.formTarget())
+                ).then(response=>{
+                    this.loginPayload = response;
                     switch(response.status) {
-                        case 302:
-                            location.href=response.url;
+                        case 200:
+                            this.loginState="verify";
                             break;
+                        case 302:
+                            if (this.options.redirectTo) {
+                                location.href = this.options.redirectTo;
+                                return;
+                            }
+                            location.href="/";
                         case 404:
-                            this.showError(response.message);
+                            showError(response.message)
                             break;
                     }
-                }
-            )
-        })
-        document.querySelectorAll(".link.codes").forEach(button=>{
-            button.addEventListener("click",event=>{
-                switch (event.target.dataset.type) {
-                    case "resend":
-                        this.post(
-                            "/auth/code/resend",
-                            {}
-                        ).then(response=>{
-                            this.showMessage("code resent")
-                        })
-                        break;
-                    case "restart":
-                        this.post(
-                            "/auth/code/restart",
-                            {}
-                        ).then(response=>this.renderLoginForm())
-                }
-
-            })
-
-            
-        })
+                    this.render()
+                });
+            }
+        );
+        this.listenFor(
+            "verify-code",
+            (event)=>{
+                this.loaded(false)
+                this.post(
+                    "auth/code/validate",
+                    this.serializeForm(this.formTarget())
+                ).then(response=>{
+                        this.loaded()
+                        switch(response.status) {
+                            case 302:
+                                if (this.options.redirectTo) {
+                                    location.href = this.options.redirectTo;
+                                }
+                                location.href = "/";
+                                break;
+                            case 404:
+                                this.showError(response.message);
+                                break;
+                        }
+                    }
+                )
+            }
+        )
+        this.listenFor(
+            "resend-code",
+            (event)=>{
+                this.loaded(false)
+                this.post(
+                    "/auth/code/resend",
+                    {}
+                ).then(response=>{
+                    this.loaded()
+                    this.showMessage("code resent")
+                })
+            }
+        )
+        this.listenFor(
+            "restart-login",
+            (event)=>{
+                this.loaded(false)
+                this.post(
+                    "/auth/code/restart",
+                    {}
+                ).then(response=>{
+                    this.loginState = "login"
+                    this.render()
+                })
+            }
+        )
+    }
+    formHeader() {
+        if (this.loginState=="login") {
+            return "Log In"
+        } else {
+            return `Please enter the code sent to ${this.loginPayload.userEmail}`
+        }
     }
 }
-console.error("hey now")

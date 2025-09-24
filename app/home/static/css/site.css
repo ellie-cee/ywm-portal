@@ -85,6 +85,7 @@ button {
   color: #fff;
   border: 0px;
   cursor: pointer;
+  font-size:16px!important;
 }
 button:disabled {
   background-color: #888;
@@ -111,25 +112,108 @@ button.link {
   padding: 0px;
   color: #000;
 }
+
+/* form styles */
+
+
 form.jsform {
   min-width:640px;
-  width:85%;
-}
-.formfooter .buttons {
+  width:90%;
+  margin:auto;
+  position:relative;
   display: flex;
-  justify-content: space-around;
-  gap:16px;
-}
-.formrow {
-  display: flex;
-  gap: 16px;
-}
-.formrow .formField {
-  display:flex;
   flex-direction: column;
-  gap:8px;
-  width:100%;
+  
+  .formrow {
+    display: flex;
+    gap: 16px;
+  }
+
+  .formrow .formField {
+    display:flex;
+    flex-direction: column;
+    gap:8px;
+    width:100%;
+  }
+  
+  .form-loading {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffffbb;
+    position:absolute;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    img {
+      opacity:0.5;
+    }
+  }
+
+  
+  .formfooter {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 320px;
+    justify-content: center;
+    .buttons {
+      display: flex;
+      justify-content:space-around;
+        gap: 16px;
+        min-width: 50%;
+        button.delete {
+          background-color: #900;
+        }
+        button[data-action="delete"] {
+          background-color: #900;
+        }
+        button.requires-id {
+          display: none;
+        }
+    }
+  }
+  .formHeader {
+    font-size:24px;
+    padding:8px;
+    margin:0px
+  }
+  .formBody {
+    padding:16px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    gap: 16px;
+    input,button,select,textarea {
+      border-radius:0px;
+      padding: 8px 12px;
+      font-size:14px!important;
+      border-color: #888!important;
+      border: 1px solid #888;
+      width:100%;
+      margin: 4px;
+    }
+  }
 }
+form.jsform.loaded {
+  .form-loading {
+    display: none;
+  }
+}
+form.jsform:has(input[name="objectId"]) {
+  .buttons {
+    button.requires-id {
+      display: block;
+    }
+    button.create-only {
+      display:none;
+    }
+  }
+}
+
+
+
+
 .sidebar {
   background-color: #ffffdd;
   min-width: 200px;
@@ -189,9 +273,7 @@ ul.sidebar-menu {
 .peeker {
   cursor: pointer;
 }
-button.delete-button {
-  background-color: #800;
-}
+
 .dashboard {
   
   display: flex;
@@ -235,6 +317,9 @@ button.delete-button {
     gap:4px;
     width:100%;
   }
+  .centered {
+    width:100%;
+  }
   .listing {
     border-right: 1px solid #cccccc;
     width: 25%;
@@ -243,7 +328,7 @@ button.delete-button {
     display: flex;
     gap:16px;
     flex-direction: column;
-    align-items: flex-start ;
+    align-items: flex-start;
     .sidebar-options {
       margin:0px;
       list-style: none;
@@ -251,6 +336,7 @@ button.delete-button {
       margin-top: 16px;
       max-height: 75%;
       overflow:auto;
+      width:100%;
       
       white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
       white-space: -pre-wrap; /* Opera 4-6 */
@@ -265,49 +351,58 @@ button.delete-button {
       li:hover a {
         color:#000099;
       }
-  
-      width: 100%;
     }
     .sidebar-options.files {
-      padding-left: 0px;
-      margin:0px
-    }
-    .iconDiv {
-      display:flex;
-      gap: 8px;
-    }
-    li.folder {
-      
-      cursor: pointer;
-      
-      ul.fileList {
-        display: none;
-        list-style: none;
-        margin: 0px;
-        margin-top: 8px;
-        padding:0px;
         padding-left: 0px;
-        li:hover {
-          font-weight: bold;
+        margin:0px;
+
+        li.folder {
+          cursor: pointer;
         }
-      }
-      
-    }
-    li.folder.open {
-      ul.fileList {
-        display:block;
-      }
-    }
+        .iconDiv {
+          display: flex;
+          gap:8px;
+        }
+        ul.fileList {
+          margin: 0px;
+          padding: 0px;
+        }
+        
+        li.folder.open {
+          ul.fileList {
+            display:block;
+          }
+        }
+        .file {
+          display: flex;
+          gap: 16px;
+          .name {
+            font-weight: bold
+          }
+          .selector {
+            input {
+              display: none;
+            }
+            label {
+              cursor: pointer;
+            }
+            label .on, label:has(input:checked) .off {
+              display:none;
+            }
+            label:has(input:checked) .on,label .off {
+              display: block;
+            }
+          }
+        }
 
+    }
   }
-  
-  a {
-    justify-content: flex-start;
-    padding: 8px;
-  }
-
 }
-
+  
+a {
+  justify-content: flex-start;
+  padding: 8px;
+}
 .fileText {
   min-height:300px;
 }
@@ -322,7 +417,3 @@ a {
     width: 100%;
 }
 
-.loginforms {
-  width:640px!important;
-  margin:auto;
-} 
