@@ -34,22 +34,22 @@ class ShopifySite extends JsForm {
             <div class="formRow">
                 <div class="formField">
                     <label>Shop Name</label>
-                    <div><input type="text" name="shopName" value="${this.shopDetails.shopName||""}" required></div>
+                    <div><input type="text" autocomplete="off" name="shopName" value="${this.shopDetails.shopName||""}" required></div>
                 </div>
                 <div class="formField">
                     <label>Shop Domain</label>
-                    <div class="labelledInput"><input type="text" name="shopDomain" value="${this.shopDetails.shopDomain||""}" required>.myshopify.com</div>
+                    <div class="labelledInput"><input autocomplete="off" type="text" name="shopDomain" value="${this.shopDetails.shopDomain||""}" required>.myshopify.com</div>
                 </div>
             </div>
             <div class="formRow">
                 <div class="formField">
                     <label>App Key</label>
-                    <div><input type="text" name="appKey" value="${this.shopDetails.appKey||""}" required></div>
+                    <div><input type="text" autocomplete="off" name="appKey" value="${this.shopDetails.appKey||""}" required></div>
                 </div>
                 <div class="formField">
                     <label>Access Token</label>
                     <div class="labelledInput">
-                        <input type="password" name="authToken" value="${this.shopDetails.authToken||""}" required>
+                        <input type="password" autocomplete="off" name="authToken" value="${this.shopDetails.authToken||""}" required>
                         <img src="/static/img/peek.png" data-for="authToken" class="peeker">
                     </div>
                 </div>
