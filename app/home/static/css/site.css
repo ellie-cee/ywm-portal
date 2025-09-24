@@ -420,8 +420,12 @@ ul.sidebar-menu {
       }
     }
     .sidebar-options.files {
-        padding-left: 0px;
-        margin:0px;
+      padding-left: 0px;
+      margin: 0px;
+      /* height: 400px; */
+      /* width: 100%; */
+      overflow: auto;
+      min-height: 400px;
 
         li.folder {
           .iconDiv {
