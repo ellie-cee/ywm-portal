@@ -1,22 +1,10 @@
 from django.db import models
-from shopify_app.models import ShopifySite
 from datetime import datetime
 from django.forms.models import model_to_dict
 import uuid
+import base64
 
 # Create your models here.
-
-class ThemeFileUpload(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
-    themeId = models.CharField(max_length=255)
-    site = models.ForeignKey(ShopifySite,on_delete=models.CASCADE,db_index=True)
-    uploadDate = models.DateTimeField(default=datetime.now)
-    content = models.TextField()
-    contentType = models.CharField(max_length=64)
-    
-    
-    class Meta:
-        db_table="themeFileUpload"
         
 class ThemeCollection(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
@@ -41,7 +29,6 @@ class ThemeFile(models.Model):
     contents = models.TextField(default="")
     updated = models.DateTimeField(default=datetime.now)
     contentType = models.CharField(max_length=128)
-    uploads = models.ManyToManyField(ThemeFileUpload)
     binaryFile = models.BooleanField(default=False,null=True)
     collection = models.ForeignKey(ThemeCollection,db_index=True,on_delete=models.CASCADE,default=uuid.uuid4,related_name="files")
     
@@ -51,7 +38,10 @@ class ThemeFile(models.Model):
         fileDetails["id"] = str(self.id)
         fileDetails["collection"] = str(self.collection.id)
         return fileDetails
-    
+    def base64Encoded(self):
+        if "base64" in self.contents:
+            return self.contents
+        return base64.b64encode(self.contents.encode("utf-8")).decode("ascii")
     
     
     def push(self,themeId):

@@ -41,16 +41,20 @@
 </div>
 <script>
     window.collectionId = "{{ collectionId }}"
+    /*
     const folders = new FileFolders({
         fileId:"{{ request.GET.fileId }}",
         collectionId:window.collectionId,
         nolink:true,
     })
+    */
     
     window.deployer = new ThemeFilesDeploy(
         {
             selectedFiles:"{{ files | escapejs }}",
-            shops:'{{ shops | escapejs }}'
+            shops:'{{ shops | escapejs }}',
+            collectionId:window.collectionId,
+            selectedShop:"{{ shopId }}"
         }
     )
 </script>

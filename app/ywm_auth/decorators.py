@@ -10,7 +10,6 @@ import logging
 logger = logging.Logger(__name__)
 
 def requiresLogin(fn):
-    print(fn)
     def wrapper(request, *args, **kwargs):
         userSession = request.session.get("userDetails")
         if userSession is None:

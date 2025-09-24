@@ -15,8 +15,6 @@
     }
 </style>
 <script src="/static/js/files.js"></script>
-{% block headerContent %}
-{% endblock %}
 <div class="content-with-sidebar">
     <div class="listing">
             {% if themeList|length > 1 %}
@@ -28,11 +26,8 @@
             {% else %}
                 <input type="hidden" name="globalThemeList" value="{{ collectionId }}">
             {% endif %}
-        <div class="instructions">
-            {% block instructions %}
-            Click on filename to edit or mark them for deployment
-            {% endblock%}
-        </div>
+        
+
         <div class="sidebarHolder">
             
         </div>
@@ -52,7 +47,6 @@
 
 </div>
 <script>
-    {% block scriptContent %}
     document.querySelector('[data-action-type="deploy"]').addEventListener("click",event=>{
         console.error(FileFolders.collectFiles())
         document.querySelector("#fileFolder").submit()
@@ -75,6 +69,5 @@
             collectionId:window.collectionId
         })
     {% endif %}
-    {% endblock %}
 </script>
 {% endblock %}

@@ -168,6 +168,7 @@ class JsForm extends Esc {
                 <div class="form-loading">
                     <img src="/static/img/loading.gif">
                 </div>
+                <div class="form-progress"></div>
                 <div>
                     <h1 id="formHeader">
                         ${this.formHeader()}
@@ -212,7 +213,7 @@ class JsForm extends Esc {
     listenFor(eventName,callBack=null) {
         
         
-        console.error("listening for",eventName)
+        
         this.listeners.push(eventName)
         this.formTarget().addEventListener(
             this.eventName(eventName),
@@ -334,8 +335,79 @@ class JsForm extends Esc {
             input.value = id;
             form.appendChild(input)
         }
-
     }
 
+}
+
+class TaskQueue extends JsForm {
+    constructor(options) {
+        super(options);
+        this.options = options;
+        this.processedItems = [];
+        this.queue = this.options.queue;
+        this.queueLength = this.queue.length;
+        this.currentItem = null;
+        this.target = this.options.owner.querySelector(".form-progress");
+        this.toggleVisibility()
+        this.nextTask()
+        
+
+    }
+    
+    toggleVisibility() {
+        let form = this.options.owner;
+        form.classList.toggle("track-progress")
+    }
+    finalize() {
+
+    }
+    nextTask() {
+        this.render()
+        if (this.queue.length<1) {
+            setTimeout(
+                ()=>{
+                    this.finalize()
+                },
+                1000
+            )
+            return;
+        }
+        
+        this.currentItem = this.queue.shift();
+        
+        if (this.currentItem) {
+            
+            this.processedItems.push(this.currentItem)
+        }
+        this.processTask(this.currentItem)
+    }
+    processTask(currentItem) {
+        this.nextTask()
+    }
+    taskDescription() {
+        return '';
+    }
+    title() {
+        return '';
+    }
+    queueProgressPercent() {
+        return Math.ceil((this.processedItems.length/this.queueLength)*100);
+    }
+    render() {
+        
+        this.target.innerHTML = ` 
+            <div class="progress-box">
+                <div class="content">
+                    <h3>${this.title()}</h3>
+                    <div class="progress-bar">
+                        <div class="inner" style="width:${this.queueProgressPercent()}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        ${this.taskDescription()}
+                    </div>
+                </div>
+            </div>
+        `
+    }
 }
 

@@ -15,7 +15,7 @@ mk /etc/enginx/sites-enabled/ywm.conf
 mkdir /var/www/ywm
 temp chown ywm:ywm /var/www/ywmclone repo
 update .env
-pipenv install
+sudo wwwpipenv install
 
 set up uwsgi.ini:
 

@@ -4,6 +4,8 @@ from django.db import models
 from home.models import IdAware
 from .graphql import GraphQL
 from .queries import authorizedScopes
+from datetime import datetime
+from themes.models import ThemeFile
 import shopify
 
 import uuid
@@ -100,8 +102,47 @@ class ShopifySite(models.Model,IdAware):
             }
         )
         return [{"name":x.get("name"),"id":x.get("id")} for x in themes.nodes("data.themes")]
+    def deployFile(self,file:ThemeFile=None,themeId=None):
+        self.startSession()
+        return GraphQL().run(
+            """
+            mutation themeFilesUpsert($files: [OnlineStoreThemeFilesUpsertFileInput!]!, $themeId: ID!) {
+                themeFilesUpsert(files: $files, themeId: $themeId) {
+                    upsertedThemeFiles {
+                        filename
+                    }
+                    userErrors {
+                        field
+                        message
+                    }
+                }
+            }
+            """,
+            {
+                "themeId":themeId,
+                "files":[
+                    {
+                        "filename":f"{file.folder}/{file.fileName}",
+                        "body":{
+                            "type":"BASE64",
+                            "value":file.base64Encoded()
+                        }
+                    }
+                ]
+            }
+        )
     
     class Meta:
         db_table="shopify_site"
     
-        
+class ThemeFileUpload(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
+    themeId = models.CharField(max_length=255)
+    site = models.ForeignKey(ShopifySite,on_delete=models.CASCADE,db_index=True)
+    uploadDate = models.DateTimeField(default=datetime.now)
+    content = models.TextField()
+    contentType = models.CharField(max_length=64)
+    
+    
+    class Meta:
+        db_table="themeFileUpload"

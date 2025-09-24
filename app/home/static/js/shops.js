@@ -132,7 +132,12 @@ class ShopifySite extends JsForm {
                 })
             }
         );
-        console.error("Dewqdewqd")
+        this.listenFor(
+            "theme-files",
+            event=>{
+                location.href=`/shops/${this.objectId}/deploy`
+            }
+        )
     }
     formHeader() {
         if (this.shopDetails.shopName) {

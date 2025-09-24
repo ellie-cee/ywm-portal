@@ -1,3 +1,8 @@
+
+body {
+  margin: 0px;
+}
+
 .esc-modal {
     position:absolute;
     top:0px;
@@ -136,7 +141,7 @@ form.jsform {
     width:100%;
   }
   
-  .form-loading {
+  .form-loading,.form-progress {
     display:flex;
     align-items: center;
     justify-content: center;
@@ -148,6 +153,9 @@ form.jsform {
     img {
       opacity:0.5;
     }
+  }
+  .form-progress {
+    display:none;
   }
 
   
@@ -200,6 +208,56 @@ form.jsform.loaded {
     display: none;
   }
 }
+form.jsform.track-progress {
+  .form-progress {
+    display: flex;
+    .progress-box {
+      width:50%;
+      border: 1px solid #000;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      background-color: #fff;
+      .content {
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        h3 {
+          margin:0px;
+        }
+        .progress-bar {
+          width: 100%;
+          height: 24px;
+          background-color: #f9f3a5;
+          border: 1px solid #000;
+          border-radius: 8px;
+          .inner {
+            border-radius: inherit;
+            background-color: #4b4948;
+            height: 24px;
+          }
+        }
+        .progress-text {
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          .headline {
+            font-weight: 900;
+            font-size:18px;
+          }
+          .subtitle {
+            font-style: italic;
+          }
+        }
+      }
+    }
+  }
+}
+
 form.jsform:has(input[name="objectId"]) {
   .buttons {
     button.requires-id {
@@ -307,7 +365,7 @@ ul.sidebar-menu {
 }
 .content-with-sidebar {
   display: flex;
-  gap:18px;
+  /*gap:18px;*/
   align-items: flex-start;
   width:100%;
   justify-content: space-between;
@@ -325,10 +383,19 @@ ul.sidebar-menu {
     width: 25%;
     max-width:320px;
     height: 100%;
-    display: flex;
-    gap:16px;
+      display: flex;
+    gap:2px;
     flex-direction: column;
     align-items: flex-start;
+    .sidebarHolder {
+      margin-left:16px;
+    }
+    .instructions {
+      color:#333333;
+      font-style: italic;
+      font-size: 14px;
+      padding:16px;
+    }
     .sidebar-options {
       margin:0px;
       list-style: none;
@@ -357,25 +424,35 @@ ul.sidebar-menu {
         margin:0px;
 
         li.folder {
-          cursor: pointer;
-        }
-        .iconDiv {
-          display: flex;
-          gap:8px;
+          .iconDiv {
+            .clicker {
+              cursor: pointer; 
+            }
+            .label {
+              cursor:default;
+              font-weight: 900;
+              color: #444444;
+            }
+            display: flex;
+            gap: 8px;
+          }
         }
         ul.fileList {
           margin: 0px;
           padding: 0px;
+          margin-top: 8px;
+          display:none!important;
         }
         
         li.folder.open {
           ul.fileList {
-            display:block;
+            display:block!important;
           }
         }
         .file {
           display: flex;
           gap: 16px;
+          cursor: pointer;
           .name {
             font-weight: bold
           }

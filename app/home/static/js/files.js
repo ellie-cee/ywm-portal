@@ -60,6 +60,9 @@ class ThemeFileEditor extends JsForm {
                 {type:"submit",label:"Create",action:"create-file",class:"create-only",type:"submit"},
                 {type:"submit",label:"Save",action:"update-file",class:"requires-id"},
                 {type:"button",label:"Delete",action:"delete-file",class:"requires-id delete"}
+            ],
+            [
+                {type:"button",label:"Deploy",action:"deploy-file",class:"requires-id"}
             ]
         ]
     }
@@ -131,6 +134,39 @@ class ThemeFileEditor extends JsForm {
                         5000
                     )
                 })
+            }
+        )
+        this.listenFor(
+            "deploy-file",
+            event=>{
+                console.error("deploy")
+
+                let fileForm = document.querySelector("#fileFolder")
+                fileForm.querySelectorAll(`input[name="fileId"]`).forEach(input=>{
+                    if (input.value!=this.objectId) {
+                        if (input.checked) {
+                            input.checked = false;
+                        }
+                    } else {
+                        input.checked=true;
+                    }
+                })
+                let formData = this.serializeForm(this.formTarget())
+                if (this.fileExists(formData.folder,formData.fileName,formData.objectId)) {
+                    this.showError(`${formData.folder}/${formData.filemName} already exists.`)
+                    return;
+                }
+                this.loaded(false)
+                console.error("saving")
+                this.post(
+                    "/files/upsert",
+                    formData
+                ).then(response=>{
+                    console.error(response)
+                    this.loaded()    
+                    fileForm.submit()
+                })
+                
             }
         )
     }
@@ -227,8 +263,8 @@ class FileFolders extends Esc {
                 <ul class="ul sidebar-options files">
                     <li class="folder open" data-collection-id="${this.options.collectionId}" data-name="${folder.folder}">
                         <div class="iconDiv">
-                            <div><img src="/static/img/folder.png"></div>
-                            <div>${folder.folder}</div>
+                            <div class="clicker"><img src="/static/img/folder.png"></div>
+                            <div class="label">${folder.folder}</div>
                         </div>
                         <ul class="fileList">
                         ${folder.files.map(file=>`
@@ -237,7 +273,7 @@ class FileFolders extends Esc {
                                     <label for="${file.id}">
                                         <div class="on"><img src="/static/img/checkbox-on.png"></div>
                                         <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                                        <input type="checkbox" name="fileId" value="${file.id}" id="${file.id}" ${this.files.includes(file.id)?'checked':''}>
+                                        <input type="checkbox" name="fileId" value="${file.id}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
                                     </label>
                                     </div>
                                     <div class="name" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
@@ -251,14 +287,21 @@ class FileFolders extends Esc {
                 </form>
             `
         }
+
         
-        document.querySelectorAll("li.folder").forEach(folder=>{
-            folder.addEventListener("click",event=>folder.classList.toggle("open"))
-            
-            if (this.options.nolink) {
+        
+        let folders = Array.from(document.querySelectorAll("li.folder"));
+        document.querySelectorAll("li.folder").forEach((folder,index)=>{
+        
+            folder.querySelector(".clicker").addEventListener("click",(event)=>{
+        
+                folder.classList.toggle("open")
+            });
+        
+            if (this.options.noclick) {
                 return;
             }
-            folder.querySelectorAll("li.file.name").forEach(file=>file.addEventListener("click",event=>{
+            folder.querySelectorAll("li.file .name").forEach(file=>file.addEventListener("click",event=>{
                 event.stopPropagation()
                 
                 if (file.dataset.binary=="false") {
