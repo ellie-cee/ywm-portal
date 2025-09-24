@@ -8,7 +8,7 @@ from ywm_auth.decorators import requiresLogin
 
 @requiresLogin
 def home(request):
-    collectionId = ThemeCollection.objects.values_list("id")[0][0]
+    collectionId = getFirstThemeId()
     return render(
         request,
         "files.html",
@@ -16,6 +16,15 @@ def home(request):
             "collectionId":collectionId
         }   
     )
+    
+def getFirstThemeId():
+    try:
+        ThemeCollection.objects.values_list("id")[0][0]
+    except:
+        collection = ThemeCollection(name="Default Collection")
+        collection.save()
+        return str(collection.id)
+        
 @requiresLogin
 def showFiles(request,collectionId):
     collection:ThemeCollection = ThemeCollection.objects.get(id=collectionId)
