@@ -1,0 +1,8 @@
+INFO 2025-09-24 21:19:05,270 autoreload 3573344 138196625820544 Watching for file changes with StatReloader
+INFO 2025-09-24 21:19:05,270 autoreload 3573344 138196625820544 Watching for file changes with StatReloader
+INFO 2025-09-24 21:19:10,400 autoreload 3573344 138196625820544 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-24 21:19:10,400 autoreload 3573344 138196625820544 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-24 21:19:10,691 autoreload 3573402 123496672394112 Watching for file changes with StatReloader
+INFO 2025-09-24 21:19:10,691 autoreload 3573402 123496672394112 Watching for file changes with StatReloader
+INFO 2025-09-24 21:19:36,891 autoreload 3573402 123496672394112 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-24 21:19:36,891 autoreload 3573402 123496672394112 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
