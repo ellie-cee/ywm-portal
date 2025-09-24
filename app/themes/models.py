@@ -19,6 +19,8 @@ class ThemeCollection(models.Model):
             else:
                 fileList[file.folder].append(fileDict)
         return [{"folder":folder,"files":contents} for folder,contents in fileList.items()]
+    def __str__(self):
+        return self.name
     class Meta:
         db_table = "themeCollection"
 
@@ -43,7 +45,8 @@ class ThemeFile(models.Model):
             return self.contents
         return base64.b64encode(self.contents.encode("utf-8")).decode("ascii")
     
-    
+    def __str__(self):
+        return f"{self.folder}/{self.name}"
     def push(self,themeId):
         
         pass
