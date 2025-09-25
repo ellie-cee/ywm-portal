@@ -77,7 +77,7 @@ class User(models.Model):
         msg.send()
         
     def censoredEmail(self):
-        return f"{self.email[0:3]}***@{self.email.split("@")[-1]}"
+        return f"{self.email[0:3]}***@{self.email.split('@')[-1]}"
     class Meta:
         db_table="ywm_user"
 
