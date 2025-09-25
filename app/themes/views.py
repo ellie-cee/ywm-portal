@@ -19,7 +19,7 @@ def home(request):
     
 def getFirstThemeId():
     try:
-        ThemeCollection.objects.values_list("id")[0][0]
+        return ThemeCollection.objects.values_list("id")[0][0]
     except:
         collection = ThemeCollection(name="Default Collection")
         collection.save()
