@@ -4,6 +4,6 @@
 app/uwsgi.ini
 Pipfile.lock
 *.log
-configs/*
 app/staticfiles/*
 tmp
+**/migrations/*
