@@ -3,6 +3,8 @@ body {
   margin: 0px;
 }
 
+
+
 .esc-modal {
     position:absolute;
     top:0px;
@@ -496,5 +498,22 @@ a {
   display: flex;
     justify-content: flex-start;
     width: 100%;
+}
+
+
+@media screen and (max-width: 720px) {
+  
+
+  .sidebar {
+    display: none!important;
+  }
+
+  .body {
+    flex-direction:column;
+    height: fit-content;
+    .sidebar {
+      display: none;
+    }
+  }
 }
 

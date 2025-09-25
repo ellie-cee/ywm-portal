@@ -92,7 +92,7 @@ class EscModal extends Esc {
                 document.querySelector("body").classList.remove("stop-scrolling");
                 document.dispatchEvent(new CustomEvent("esc:modal:closed",{bubbles:true}))
                 if(config.onClose) {
-                    console.error(config.onClose())
+                    
                     config.onClose()
                 }
             }
@@ -113,10 +113,18 @@ class EscModal extends Esc {
 
 class JsForm extends Esc {
     constructor(options) {
-        super(options)
+        super(options);
+        this.uuid = crypto.randomUUID()
+        this.options=options;
+        this.targetElement = ".jsapp";
+        this.listeners = [];
+        this.objectId = options.objectId||null;
     }
     messageElement() {
         return document.querySelector(".request-response")
+    }
+    disappear() {
+        this.target().innerHTML = ``;
     }
     showError(message) {
         let footer = this.messageElement()
@@ -130,6 +138,276 @@ class JsForm extends Esc {
     }
     serializeForm(form) {
         return Object.fromEntries(new FormData(form).entries())
+    }
+    target() {
+        
+        return document.querySelector(this.targetElement);
+    }
+    formName() {
+        return "form"
+    }
+    formTarget() {
+
+        return document.querySelector(`#${this.formName()}`)
+    }
+    formHeader() {
+        return "a form"
+    }
+    buttons() {
+        return []
+    }
+    subtitle() {
+        return ''
+    }
+    hasObjectId() {
+        return (this.objectId!=null && this.objectId!="");
+    }
+    render(isLoaded=true) {
+        this.target().innerHTML = `
+            <form id="${this.formName()}" class="jsform ${isLoaded?'loaded':''}">
+                <div class="form-loading">
+                    <img src="/static/img/loading.gif">
+                </div>
+                <div class="form-progress"></div>
+                <div>
+                    <h1 id="formHeader">
+                        ${this.formHeader()}
+                    </h1>
+                </div>
+                <div class="subtitle">${this.subtitle()}</div>
+                <div class="request-response"></div>
+                
+                <div class="formBody">
+                    ${this.formContents()}
+                </div> 
+                <div class="formfooter">
+                    ${this.buttons().map(row=>`
+                        <div class="buttons">
+                            ${row.map(button=>`
+                            <button class="${button.class?button.class:''}" data-action="${button.action}" type="${button.type?button.type:'button'}">
+                                ${button.label}
+                            </button>
+                            `
+                        ).join("")}
+                        </div>
+                        `
+                    ).join("")}
+                </div>
+            </form>
+        `
+        if (this.hasObjectId()) {
+            this.setObjectId(this.objectId)
+        }
+        
+        this.setupEvents();
+    }
+    formContents() {
+        return "blorp"
+    }
+    eventsPrefix() {
+        return `ywm:${this.formName()}`
+    }
+    eventName(eventName) {
+        return `${this.eventsPrefix()}:${eventName}`
+    }
+    listenFor(eventName,callBack=null) {
+        
+        
+        
+        this.listeners.push(eventName)
+        this.formTarget().addEventListener(
+            this.eventName(eventName),
+            event=>{
+                
+                if (callBack) {
+                    callBack(event);
+                }
+                event.stopPropagation()
+            }
+        )
+    }
+    showMessage(message,isError=false) {
+        let notyf = new Notyf(
+            {
+                ripple:true,
+                duration:3000,
+                position:{x:'right',y:'center'}
+            }
+        );
+        notyf.success(message);
+    }
+    showError(message,permanent=false) {
+
+        let notyf = null;
+        if (!permanent) {
+            notyf =  new Notyf({
+                    ripple:true,
+                    duration:5000,
+                    position:{x:'right',y:'center'}
+                }
+            );
+        } else {
+            notyf =  new Notyf(
+                {
+                    ripple:true,
+                    position:{x:'right',y:'center'}
+                }
+            );
+        }
+        notyf.error(message)
+    }
+    
+    loaded(loaded=true) {
+        
+        if (loaded) {
+            this.formTarget().classList.add("loaded")
+        } else {
+            this.formTarget().classList.remove("loaded")
+        }
+    }
+    dispatchEvent(thisEventName,detail=null) {
+        
+        this.formTarget().dispatchEvent(
+            new CustomEvent(
+                thisEventName,
+                {bubbles:true,detail:detail}
+            )
+        )
+    }
+    setupEvents() {
+        
+        let form = this.formTarget()
+        form.addEventListener("submit",event=>{
+            event.preventDefault();
+            event.stopPropagation();
+
+            let submitAction =this.formTarget().querySelector(`button[type="submit"]`).dataset.action;
+            this.dispatchEvent(this.eventName(submitAction));
+            event.stopPropagation()
+            return;
+        })
+        this.formTarget().querySelectorAll("button[data-action]").forEach(button=>{
+            
+            if (button.type=="submit") {
+                return;
+            }
+            button.addEventListener("click",event=>{
+                
+                this.dispatchEvent(this.eventName(button.dataset.action))
+                event.stopPropagation()
+            })
+        });
+        this.formTarget().querySelectorAll(".peeker").forEach(peeker=>peeker.addEventListener("click",event=>{
+            let input = document.querySelector(`input[name="${peeker.dataset.for}"]`)
+
+            if (input.type=="password") {
+                input.type="text";
+            } else {
+                input.type="password";
+            }
+            }));
+        
+        this.formTarget().querySelectorAll("textarea").forEach(textArea=>{
+            textArea.addEventListener("keydown",event=> {
+                if (event.key=="Tab") {
+                    event.preventDefault();
+                    let position = textArea.selectionStart;
+                    
+                    let text = textArea.value;    
+                    textArea.value = text.slice(0, position) + "   " + text.slice(position);
+                }
+            })
+        })
+    }
+    setObjectId(id) {
+        if (id==null) {
+            return
+        }
+        this.fileId = id;
+        let form  = document.querySelector(`#${this.formName()}`)
+        let idInput = form.querySelector('[name="objectId]')
+        if (idInput!=null) {
+            idInput.value = id;
+        } else {
+            let input = document.createElement("input");
+            input.type="hidden";
+            input.name="objectId";
+            input.value = id;
+            form.appendChild(input)
+        }
+    }
+
+}
+
+class TaskQueue extends JsForm {
+    constructor(options) {
+        super(options);
+        this.options = options;
+        this.processedItems = [];
+        this.queue = this.options.queue;
+        this.queueLength = this.queue.length;
+        this.currentItem = null;
+        this.target = this.options.owner.querySelector(".form-progress");
+        this.toggleVisibility()
+        this.nextTask()
+        
+
+    }
+    
+    toggleVisibility() {
+        let form = this.options.owner;
+        form.classList.toggle("track-progress")
+    }
+    finalize() {
+
+    }
+    nextTask() {
+        this.render()
+        if (this.queue.length<1) {
+            setTimeout(
+                ()=>{
+                    this.finalize()
+                },
+                1000
+            )
+            return;
+        }
+        
+        this.currentItem = this.queue.shift();
+        
+        if (this.currentItem) {
+            
+            this.processedItems.push(this.currentItem)
+        }
+        this.processTask(this.currentItem)
+    }
+    processTask(currentItem) {
+        this.nextTask()
+    }
+    taskDescription() {
+        return '';
+    }
+    title() {
+        return '';
+    }
+    queueProgressPercent() {
+        return Math.ceil((this.processedItems.length/this.queueLength)*100);
+    }
+    render() {
+        
+        this.target.innerHTML = ` 
+            <div class="progress-box">
+                <div class="content">
+                    <h3>${this.title()}</h3>
+                    <div class="progress-bar">
+                        <div class="inner" style="width:${this.queueProgressPercent()}%"></div>
+                    </div>
+                    <div class="progress-text">
+                        ${this.taskDescription()}
+                    </div>
+                </div>
+            </div>
+        `
     }
 }
 

@@ -36,3 +36,6 @@ django-filter="*"
 django-shopify-webhook = ">=0.6.0"
 django-anymail="*"
 uwsgi = "*"
+Jinja2 = "*"
+passwordgenerator="*"
+

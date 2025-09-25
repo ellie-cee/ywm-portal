@@ -149,14 +149,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = False
 
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend" 
+#EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_EMAIL")  # if you don't already have this in settings
 SERVER_EMAIL = f"apps@{os.environ.get('MAIL_DOMAIN')}"  # ditto (default from-email for Django errors)
-ANYMAIL = {
-    # (exact settings here depend on your ESP...)
-    "MAILGUN_API_KEY": os.environ.get("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": os.environ.get('MAIL_DOMAIN'),  # your Mailgun domain, if needed
-}
+#ANYMAIL = {
+#   # (exact settings here depend on your ESP...)
+#    "MAILGUN_API_KEY": os.environ.get("MAILGUN_API_KEY"),
+#    "MAILGUN_SENDER_DOMAIN": os.environ.get('MAIL_DOMAIN'),  # your Mailgun domain, if needed
+#}
 
 LOGGING = {
     'version': 1,
