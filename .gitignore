@@ -7,3 +7,4 @@ Pipfile.lock
 app/staticfiles/*
 tmp
 **/migrations/*
+app/html
