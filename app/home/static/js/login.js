@@ -87,7 +87,7 @@ class Login extends JsForm {
                             }
                             location.href="/";
                         case 404:
-                            showError(response.message)
+                            this.showError(response.message)
                             break;
                     }
                     this.render()
