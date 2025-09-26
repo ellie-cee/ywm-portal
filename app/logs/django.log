@@ -1959,3 +1959,39 @@ INFO 2025-09-25 00:53:31,120 basehttp 3625745 133218639341248 "GET /static/js/sh
 INFO 2025-09-25 00:53:31,120 basehttp 3625745 133218639341248 "GET /static/js/shops.js HTTP/1.1" 200 6821
 INFO 2025-09-25 00:53:31,174 basehttp 3625745 133218647733952 "GET /static/img/peek.png HTTP/1.1" 304 0
 INFO 2025-09-25 00:53:31,174 basehttp 3625745 133218647733952 "GET /static/img/peek.png HTTP/1.1" 304 0
+INFO 2025-09-26 00:19:11,753 autoreload 3997654 131661038099328 Watching for file changes with StatReloader
+INFO 2025-09-26 00:19:11,753 autoreload 3997654 131661038099328 Watching for file changes with StatReloader
+INFO 2025-09-26 00:19:15,634 basehttp 3997654 131660978235072 "GET / HTTP/1.1" 200 1190
+INFO 2025-09-26 00:19:15,634 basehttp 3997654 131660978235072 "GET / HTTP/1.1" 200 1190
+WARNING 2025-09-26 00:19:15,670 log 3997654 131660978235072 Not Found: /static/css/site.css
+WARNING 2025-09-26 00:19:15,673 log 3997654 131660968793792 Not Found: /static/js/site.js
+WARNING 2025-09-26 00:19:15,670 log 3997654 131660978235072 Not Found: /static/css/site.css
+WARNING 2025-09-26 00:19:15,673 log 3997654 131660968793792 Not Found: /static/js/site.js
+WARNING 2025-09-26 00:19:15,680 log 3997654 131660960401088 Not Found: /static/img/ywm_rectangle_brown_logo_600px.png
+WARNING 2025-09-26 00:19:15,680 basehttp 3997654 131660978235072 "GET /static/css/site.css HTTP/1.1" 404 9176
+WARNING 2025-09-26 00:19:15,683 log 3997654 131660746061504 Not Found: /static/js/login.js
+WARNING 2025-09-26 00:19:15,680 log 3997654 131660960401088 Not Found: /static/img/ywm_rectangle_brown_logo_600px.png
+WARNING 2025-09-26 00:19:15,680 basehttp 3997654 131660978235072 "GET /static/css/site.css HTTP/1.1" 404 9176
+WARNING 2025-09-26 00:19:15,683 log 3997654 131660746061504 Not Found: /static/js/login.js
+WARNING 2025-09-26 00:19:15,683 basehttp 3997654 131660968793792 "GET /static/js/site.js HTTP/1.1" 404 9170
+WARNING 2025-09-26 00:19:15,683 basehttp 3997654 131660968793792 "GET /static/js/site.js HTTP/1.1" 404 9170
+WARNING 2025-09-26 00:19:15,684 basehttp 3997654 131660960401088 "GET /static/img/ywm_rectangle_brown_logo_600px.png HTTP/1.1" 404 9254
+WARNING 2025-09-26 00:19:15,684 basehttp 3997654 131660746061504 "GET /static/js/login.js HTTP/1.1" 404 9173
+WARNING 2025-09-26 00:19:15,684 basehttp 3997654 131660960401088 "GET /static/img/ywm_rectangle_brown_logo_600px.png HTTP/1.1" 404 9254
+WARNING 2025-09-26 00:19:15,684 basehttp 3997654 131660746061504 "GET /static/js/login.js HTTP/1.1" 404 9173
+WARNING 2025-09-26 00:19:15,949 log 3997654 131660978235072 Not Found: /favicon.ico
+WARNING 2025-09-26 00:19:15,949 log 3997654 131660978235072 Not Found: /favicon.ico
+WARNING 2025-09-26 00:19:15,949 basehttp 3997654 131660978235072 "GET /favicon.ico HTTP/1.1" 404 9152
+WARNING 2025-09-26 00:19:15,949 basehttp 3997654 131660978235072 "GET /favicon.ico HTTP/1.1" 404 9152
+WARNING 2025-09-26 00:19:58,869 basehttp 3997654 131660978235072 "GET /stat/css/aite.css HTTP/1.1" 404 1959
+WARNING 2025-09-26 00:19:58,869 basehttp 3997654 131660978235072 "GET /stat/css/aite.css HTTP/1.1" 404 1959
+INFO 2025-09-26 00:20:05,366 basehttp 3997654 131660746061504 "GET /stat/css/site.css HTTP/1.1" 200 9180
+INFO 2025-09-26 00:20:05,366 basehttp 3997654 131660746061504 "GET /stat/css/site.css HTTP/1.1" 200 9180
+INFO 2025-09-26 00:27:35,917 autoreload 3997654 131661038099328 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:27:35,917 autoreload 3997654 131661038099328 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:27:36,214 autoreload 4004497 127675593710464 Watching for file changes with StatReloader
+INFO 2025-09-26 00:27:36,214 autoreload 4004497 127675593710464 Watching for file changes with StatReloader
+INFO 2025-09-26 00:27:39,328 autoreload 4004497 127675593710464 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:27:39,328 autoreload 4004497 127675593710464 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:27:39,637 autoreload 4004556 140088925789056 Watching for file changes with StatReloader
+INFO 2025-09-26 00:27:39,637 autoreload 4004556 140088925789056 Watching for file changes with StatReloader
