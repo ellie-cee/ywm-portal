@@ -1995,3 +1995,33 @@ INFO 2025-09-26 00:27:39,328 autoreload 4004497 127675593710464 /home/ellie/work
 INFO 2025-09-26 00:27:39,328 autoreload 4004497 127675593710464 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
 INFO 2025-09-26 00:27:39,637 autoreload 4004556 140088925789056 Watching for file changes with StatReloader
 INFO 2025-09-26 00:27:39,637 autoreload 4004556 140088925789056 Watching for file changes with StatReloader
+INFO 2025-09-26 00:34:45,518 autoreload 4010015 127040083557248 Watching for file changes with StatReloader
+INFO 2025-09-26 00:34:45,518 autoreload 4010015 127040083557248 Watching for file changes with StatReloader
+WARNING 2025-09-26 00:34:48,291 log 4010015 127040025011904 Not Found: /stat/css/site.css
+WARNING 2025-09-26 00:34:48,291 log 4010015 127040025011904 Not Found: /stat/css/site.css
+WARNING 2025-09-26 00:34:48,292 basehttp 4010015 127040025011904 "GET /stat/css/site.css HTTP/1.1" 404 9172
+WARNING 2025-09-26 00:34:48,292 basehttp 4010015 127040025011904 "GET /stat/css/site.css HTTP/1.1" 404 9172
+WARNING 2025-09-26 00:34:48,324 log 4010015 127040025011904 Not Found: /favicon.ico
+WARNING 2025-09-26 00:34:48,324 log 4010015 127040025011904 Not Found: /favicon.ico
+WARNING 2025-09-26 00:34:48,325 basehttp 4010015 127040025011904 "GET /favicon.ico HTTP/1.1" 404 9154
+WARNING 2025-09-26 00:34:48,325 basehttp 4010015 127040025011904 "GET /favicon.ico HTTP/1.1" 404 9154
+INFO 2025-09-26 00:34:53,565 basehttp 4010015 127040025011904 "GET /static/css/site.css HTTP/1.1" 200 9180
+INFO 2025-09-26 00:34:53,565 basehttp 4010015 127040025011904 "GET /static/css/site.css HTTP/1.1" 200 9180
+INFO 2025-09-26 00:45:06,097 autoreload 4010015 127040083557248 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:45:06,097 autoreload 4010015 127040083557248 /home/ellie/workspace/freelance/app/ywm-quickstart/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-26 00:45:06,393 autoreload 4017997 140333013502848 Watching for file changes with StatReloader
+INFO 2025-09-26 00:45:06,393 autoreload 4017997 140333013502848 Watching for file changes with StatReloader
+INFO 2025-09-26 00:45:46,767 basehttp 4017997 140332955084480 "GET /static/css/site.css HTTP/1.1" 304 0
+INFO 2025-09-26 00:45:46,767 basehttp 4017997 140332955084480 "GET /static/css/site.css HTTP/1.1" 304 0
+WARNING 2025-09-26 00:45:46,789 log 4017997 140332955084480 Not Found: /favicon.ico
+WARNING 2025-09-26 00:45:46,789 log 4017997 140332955084480 Not Found: /favicon.ico
+WARNING 2025-09-26 00:45:46,789 basehttp 4017997 140332955084480 "GET /favicon.ico HTTP/1.1" 404 9154
+WARNING 2025-09-26 00:45:46,789 basehttp 4017997 140332955084480 "GET /favicon.ico HTTP/1.1" 404 9154
+INFO 2025-09-26 00:48:27,316 autoreload 4017997 140333013502848 /home/ellie/workspace/freelance/app/ywm-quickstart/app/home/views.py changed, reloading.
+INFO 2025-09-26 00:48:27,316 autoreload 4017997 140333013502848 /home/ellie/workspace/freelance/app/ywm-quickstart/app/home/views.py changed, reloading.
+INFO 2025-09-26 00:48:27,600 autoreload 4020615 138650956880768 Watching for file changes with StatReloader
+INFO 2025-09-26 00:48:27,600 autoreload 4020615 138650956880768 Watching for file changes with StatReloader
+INFO 2025-09-26 00:48:50,789 autoreload 4020615 138650956880768 /home/ellie/workspace/freelance/app/ywm-quickstart/app/home/views.py changed, reloading.
+INFO 2025-09-26 00:48:50,789 autoreload 4020615 138650956880768 /home/ellie/workspace/freelance/app/ywm-quickstart/app/home/views.py changed, reloading.
+INFO 2025-09-26 00:48:51,102 autoreload 4020936 130995697740672 Watching for file changes with StatReloader
+INFO 2025-09-26 00:48:51,102 autoreload 4020936 130995697740672 Watching for file changes with StatReloader
