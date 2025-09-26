@@ -25,7 +25,7 @@ class UserPermissions(models.Model):
 
 class User(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
-    name = models.TextField(default="No Name")
+    name = models.CharField(max_length=255,default="No Name")
     email = models.EmailField(db_index=True)
     permissions = models.ManyToManyField(UserPermissions)
     
