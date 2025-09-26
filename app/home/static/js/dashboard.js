@@ -25,7 +25,7 @@ class Dashboard extends JsForm {
         let container = document.createElement("div")
         container.classList.add("temporary")
         container.classList.add("dashboardCell")
-        container.innerHTML = `<img src="/static/img/Loading_icon.gif">`
+        container.innerHTML = `<img src="/static/img/loading.gif">`
         this.loadIntoSlot(container)
     }
     loadSites() {
