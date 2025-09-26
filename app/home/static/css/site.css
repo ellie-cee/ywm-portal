@@ -391,6 +391,10 @@ ul.sidebar-menu {
     align-items: flex-start;
     .sidebarHolder {
       margin-left:16px;
+      max-height: 65%;
+      height: 65%;
+      overflow: auto;
+      width: 90%;
     }
     .instructions {
       color:#333333;
@@ -424,10 +428,7 @@ ul.sidebar-menu {
     .sidebar-options.files {
       padding-left: 0px;
       margin: 0px;
-      /* height: 400px; */
-      /* width: 100%; */
       overflow: auto;
-      min-height: 400px;
 
         li.folder {
           .iconDiv {
