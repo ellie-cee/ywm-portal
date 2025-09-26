@@ -517,3 +517,9 @@ a {
   }
 }
 
+.dashboardCell {
+  .dashboard-cell-loading {
+    width: fit-content;
+    margin: auto;
+  }
+}
