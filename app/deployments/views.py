@@ -17,30 +17,36 @@ def defaultCollectionId():
     return str(ThemeCollection.objects.first().id)
 def shopList():
     return [{"name":shop.shopName,"shopId":str(shop.id)} for shop in ShopifySite.objects.all()]
-def defaultOptions():
+
+def deployPayload(files=[],shopId=""):
     return {
         "collectionId":defaultCollectionId(),
-        "shopId":"",
-        "files":json.dumps([]),
+        "shopId":shopId,
+        "files":json.dumps(filesList(files)),
         "shops":json.dumps(shopList()),
     }
+def filesList(incomingFiles):
+    return [
+        str(file.id) for file in ThemeFile.objects.exclude(id__in=incomingFiles).filter(isCommonFile=True).all()
+    ]+incomingFiles
+    
 @requiresLogin
 def home(request):
     return renderDeploy(
         request,
-        defaultOptions()
+        deployPayload()
     )
 @requiresLogin
 def fileSet(request):
     return renderDeploy(
         request,
-        defaultOptions() | {"files":json.dumps(request.POST._getlist("fileId"))}
+        deployPayload(request.POST._getlist("fileId"))
     )
 @requiresLogin
 def shopDeploy(request,shopId):
     return renderDeploy(
         request,
-        defaultOptions() | {"shopId":shopId}
+        deployPayload(shopId=shopId)
     )
     
 @requiresLogin

@@ -1,7 +1,10 @@
+import json
 from django.shortcuts import render
+import pytz
 from .models import ThemeFile,ThemeCollection
 from home.views import jsonResponse,getJsonPayload
 import mimetypes
+from datetime import datetime
 from ywm_auth.decorators import requiresLogin
 
 # Create your views here.
@@ -39,6 +42,7 @@ def showFiles(request,collectionId):
 def loadFile(request,fileId):
     
     file = ThemeFile.objects.get(id=fileId)
+    print(json.dumps(file.toDict(),indent=1))
     return jsonResponse(
         file.toDict(),
         status=200
@@ -71,11 +75,14 @@ def upsert(request):
         if ".liquid" in payload.get("fileName"):
             file.contentType = "application/liquid"
         else:
-                file.contentType = "text/plain"
+            file.contentType = "text/plain"
     
     file.fileName = payload.get("fileName")
     file.folder = payload.get("folder")
     file.contents = payload.get("contents")
+    file.githubLink = payload.get("githubLink")
+    file.isCommonFile = payload.get("isCommonFile") is not None
+    file.updated = datetime.now(tz=pytz.UTC)
     file.binaryFile = False
     file.collection = ThemeCollection.objects.get(id=payload.get("collectionId"))
     file.save()

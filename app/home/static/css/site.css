@@ -135,6 +135,12 @@ form.jsform {
     display: flex;
     gap: 16px;
   }
+  .checkboxField {
+    display: flex;
+    gap:16px;
+    align-items: center;
+    width: 100%;
+  }
 
   .formrow .formField {
     display:flex;
@@ -391,10 +397,8 @@ ul.sidebar-menu {
     align-items: flex-start;
     .sidebarHolder {
       margin-left:16px;
-      max-height: 65%;
-      height: 65%;
+      min-height: 65%;
       overflow: auto;
-      width: 90%;
     }
     .instructions {
       color:#333333;
@@ -428,6 +432,8 @@ ul.sidebar-menu {
     .sidebar-options.files {
       padding-left: 0px;
       margin: 0px;
+      /* height: 400px; */
+      /* width: 100%; */
       overflow: auto;
 
         li.folder {
@@ -463,23 +469,30 @@ ul.sidebar-menu {
           .name {
             font-weight: bold
           }
-          .selector {
-            input {
-              display: none;
-            }
-            label {
-              cursor: pointer;
-            }
-            label .on, label:has(input:checked) .off {
-              display:none;
-            }
-            label:has(input:checked) .on,label .off {
-              display: block;
-            }
+          .name.common-file {
+            color: #007700;
           }
         }
 
     }
+  }
+}
+
+.selector {
+  display: flex;
+  align-items: center;
+  gap:8px;
+  input {
+    display: none;
+  }
+  label {
+    cursor: pointer;
+  }
+  label .on, label:has(input:checked) .off {
+    display:none;
+  }
+  label:has(input:checked) .on,label .off {
+    display: block;
   }
 }
   
@@ -524,3 +537,5 @@ a {
     margin: auto;
   }
 }
+
+/* sfsfdfsd */

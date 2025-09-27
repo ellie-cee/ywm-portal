@@ -34,42 +34,51 @@ class ThemeFileEditor extends JsForm {
             )
         )
     }
-    validFolders() {
-        return [
-            "assets",
-            "config",
-            "layout",
-            "locales",
-            "sections",
-            "snippets",
-            "templates",
-            "templates/customers"
-        ]
-    }
     formContents() {
         return `
             <input type="hidden" name="collectionId" value="${this.collectionId}">
             <div class="formRow">
                 <div class="formField">
                     <label>Folder</label>
-                    <div>
-                        <select name="folder" required">
-                            <option value="">Select Folder</option>
-                            ${this.validFolders().map(
-                                folder=>`<option value="${folder}" ${folder==this.fileDetails.folder?'selected':''}>${folder}</option>`).join("")}
-                        </select>
-                    </div>
+                    <div><input type="text" name="folder" value="${this.valueOf(this.fileDetails.folder)}" required></div>
                 </div>
                 <div class="formField">
                     <label>Filename</label>
-                    <div><input type="text" name="fileName" value="${this.fileDetails.fileName||""}" required></div>
+                    <div><input type="text" name="fileName" value="${this.valueOf(this.fileDetails.fileName)}" required></div>
                 </div>
             </div>
                 
             <div>
                 <label>Contents</label>
-                <textarea name="contents" class="fileText" required>${this.fileDetails.contents||""}</textarea>
+                <textarea name="contents" class="fileText" required>${this.valueOf(this.fileDetails.contents)}</textarea>
             </div>
+            <div class="formRow">
+                <div class="formField">
+                    <label>Last Updated</label>
+                    <div>
+                        <input type="date" name="updated" value="${this.valueOf(this.fileDetails.updated)}">
+                    </div>
+                </div>
+                <div class="checkboxField">
+                    <label>&nbsp;</label>
+                    <div class="selector">
+                        <div>Common File</div>
+                        <label for="isCommonFile">
+                            <div class="on"><img src="/static/img/checkbox-on.png"></div>
+                            <div class="off"><img src="/static/img/checkbox-off.png"></div>
+                            <input type="checkbox" name="isCommonFile" value="1" id="isCommonFile" ${this.fileDetails.isCommonFile?'checked':''}>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label>Github Link</label>
+                <input type="text" name="githubLink" value="${this.valueOf(this.fileDetails.githubLink)}">
+            </div>
+
+            
+
+
     `
     }
     buttons() {
@@ -294,7 +303,7 @@ class FileFolders extends Esc {
                                         <input type="checkbox" name="fileId" value="${file.id}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
                                     </label>
                                     </div>
-                                    <div class="name" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
+                                    <div class="name ${file.isCommonFile?' common-file':''}" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
                                         ${file.fileName}
                                     </div>
                                 </div>

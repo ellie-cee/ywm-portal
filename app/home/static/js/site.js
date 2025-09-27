@@ -162,6 +162,9 @@ class JsForm extends Esc {
     hasObjectId() {
         return (this.objectId!=null && this.objectId!="");
     }
+    valueOf(fieldValue) {
+        return fieldValue||"";
+    }
     render(isLoaded=true) {
         this.target().innerHTML = `
             <form id="${this.formName()}" class="jsform ${isLoaded?'loaded':''}">

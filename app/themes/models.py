@@ -4,6 +4,7 @@ from django.forms.models import model_to_dict
 import uuid
 import base64
 
+
 # Create your models here.
         
 class ThemeCollection(models.Model):
@@ -28,6 +29,8 @@ class ThemeFile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
     folder = models.CharField(max_length=255,db_index=True)
     fileName = models.CharField(max_length=255,db_index=True)
+    isCommonFile = models.BinaryField(default=False)
+    githubLink = models.CharField(default="",max_length=255)
     contents = models.TextField(default="")
     updated = models.DateTimeField(default=datetime.now)
     contentType = models.CharField(max_length=128)
@@ -36,9 +39,11 @@ class ThemeFile(models.Model):
     
     def toDict(self):
         fileDetails = model_to_dict(self)
-        del fileDetails["updated"]
+        fileDetails["isCommonFile"] = bool(self.isCommonFile)
         fileDetails["id"] = str(self.id)
         fileDetails["collection"] = str(self.collection.id)
+        
+        fileDetails["updated"] = fileDetails["updated"].strftime("%Y-%m-%d")
         return fileDetails
     def base64Encoded(self):
         if "base64" in self.contents:
