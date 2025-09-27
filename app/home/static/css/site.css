@@ -434,7 +434,6 @@ ul.sidebar-menu {
       margin: 0px;
       /* height: 400px; */
       /* width: 100%; */
-      overflow: auto;
 
         li.folder {
           .iconDiv {
