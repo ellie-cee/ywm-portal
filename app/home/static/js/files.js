@@ -324,6 +324,7 @@ class FileFolders extends Esc {
         })
         this.formTarget().addEventListener("ywm:folders:uncheck",event=>{
             this.formTarget().querySelectorAll(".autoUncheck").forEach(file=>{
+                if (!this.options.explicitFiles.includes(file.value))
                 file.checked=!file.checked;
             })
         })
