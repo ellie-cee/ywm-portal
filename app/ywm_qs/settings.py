@@ -150,10 +150,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 APPEND_SLASH = False
 
-#EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_EMAIL")  # if you don't already have this in settings
-EMAIL_USE_TLS = False
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#M_EMAIL = os.environ.get("DEFAULT_EMAIL")  # if you don't already have this in settings
+
+
+EMAIL_USE_TLS = True
 EMAIL_PORT = 25
 EMAIL_HOST_USER = os.environ.get("DEFAULT_EMAIL")
 #EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")

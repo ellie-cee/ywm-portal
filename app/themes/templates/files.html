@@ -67,12 +67,14 @@
     {% if request.GET.fileId %}
         window.folderHandler = new FileFolders({
             fileId:"{{ request.GET.fileId }}",
-            collectionId:window.collectionId
+            collectionId:window.collectionId,
+            explicitFiles:[],
         })
     {% else %}
         window.folderHandler = new FileFolders({
             fileId:"{{ request.GET.fileId }}",
-            collectionId:window.collectionId
+            collectionId:window.collectionId,
+            explicitFiles:[]
         })
     {% endif %}
     {% endblock %}

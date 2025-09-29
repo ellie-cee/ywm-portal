@@ -31,7 +31,7 @@
             <div class="sidebarHolder">
             
             </div>
-        
+            <button class="button" id="uncheckAll">Uncheck Common</button>
     </div>
     <div class="centered">
         <div class="jsapp"></div>
@@ -48,14 +48,27 @@
         nolink:true,
     })
     */
+
+    document.querySelector("#uncheckAll").addEventListener("click",event=>{
+        let folderForm = document.querySelector("#fileFolder");
+        if (folderForm) {
+            folderForm.dispatchEvent(new CustomEvent(
+                "ywm:folders:uncheck",
+                {detail:null,bubbles:true}
+            ))
+        }
+    })
     
     window.deployer = new ThemeFilesDeploy(
         {
             selectedFiles:"{{ files | escapejs }}",
+            selectedFile:"{{ request.POST.fileId }}",
+            explicitFiles:"{{ explicitFiles | escapejs }}",
             shops:'{{ shops | escapejs }}',
             collectionId:window.collectionId,
             selectedShop:"{{ shopId }}"
         }
     )
 </script>
+<!-- deqwdewq -->
 {% endblock %}

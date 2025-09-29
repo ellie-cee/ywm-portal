@@ -232,21 +232,6 @@ class FileFolders extends Esc {
         super(options);        
         this.options = options;
         this.files = this.options.files||[];
-        document.addEventListener("ywm:folders:load",(event=>{
-            this.fileId = null;
-            this.loadFolders(event.detail.fileId,event.detail.collectionId)
-        }))
-        document.addEventListener("ywm:folders:collect-files",event=>{
-            document.dispatchEvent(
-                new CustomEvent(
-                    "ywm:folders:files-collected",
-                    {
-                        detail:this.target().querySelectorAll("input:checked").map(check=>check.value),
-                        bubbles:true
-                    }
-                )
-            )
-        })
         document.querySelector(".sidebarHolder").querySelectorAll("[data-action-type]").forEach(button=>{
             
             switch(button.dataset.actionType) {
@@ -270,6 +255,9 @@ class FileFolders extends Esc {
             this.loadFolders(null,this.collectionId)
         }
     }
+    formTarget() {
+        return document.querySelector("#fileFolder")
+    }
     target() {
         return document.querySelector(".sidebar-options.files")
     }
@@ -281,12 +269,13 @@ class FileFolders extends Esc {
             })
     }
     render(response,fileId) {
+        console.error(this.options)
         let filesList = document.querySelector(".sidebarHolder");
         if (filesList) {
             filesList.innerHTML = `
                 <form id="fileFolder" method="post" action="/deploy/files">
                 <input type='hidden' name="csrfmiddlewaretoken" value="${document.querySelector('[name="csrfmiddlewaretoken"]').value}">
-                    ${response.files.map(folder=>`
+                    ${Esc.sortArrayofObjects(response.files,"folder").map(folder=>`
                 <ul class="ul sidebar-options files">
                     <li class="folder open" data-collection-id="${this.options.collectionId}" data-name="${folder.folder}">
                         <div class="iconDiv">
@@ -294,13 +283,13 @@ class FileFolders extends Esc {
                             <div class="label">${folder.folder}</div>
                         </div>
                         <ul class="fileList">
-                        ${folder.files.map(file=>`
+                        ${Esc.sortArrayofObjects(folder.files,"fileName").map(file=>`
                             <li class="file ${file.id==fileId?'selected':''}" data-name="${file.fileName}" data-id="${file.id}">
                                     <div class="selector">
                                     <label for="${file.id}">
                                         <div class="on"><img src="/static/img/checkbox-on.png"></div>
                                         <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                                        <input type="checkbox" name="fileId" value="${file.id}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
+                                        <input type="checkbox" name="fileId" value="${file.id}" class="${file.id==this.options.selectedFile || this.options.explicitFiles.includes(file.id)?'':'autoUncheck'}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
                                     </label>
                                     </div>
                                     <div class="name ${file.isCommonFile?' common-file':''}" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
@@ -314,9 +303,31 @@ class FileFolders extends Esc {
                 </form>
             `
         }
+        this.setupEvents()
 
+    }
+    setupEvents() {
+        this.formTarget().addEventListener("ywm:folders:load",(event=>{
+            this.fileId = null;
+            this.loadFolders(event.detail.fileId,event.detail.collectionId)
+        }))
         
-        
+        this.formTarget().addEventListener("ywm:folders:collect-files",event=>{
+            document.dispatchEvent(
+                new CustomEvent(
+                    "ywm:folders:files-collected",
+                    {
+                        detail:this.target().querySelectorAll("input:checked").map(check=>check.value),
+                        bubbles:true
+                    }
+                )
+            )
+        })
+        this.formTarget().addEventListener("ywm:folders:uncheck",event=>{
+            this.formTarget().querySelectorAll(".autoUncheck").forEach(file=>{
+                file.checked=false;
+            })
+        })
         let folders = Array.from(document.querySelectorAll("li.folder"));
         document.querySelectorAll("li.folder").forEach((folder,index)=>{
         

@@ -51,6 +51,11 @@ class Esc {
     gid2id(gid) {
         return parseInt(gid.split("/").pop())
     }
+    static sortArrayofObjects(objects,sortKey) {
+        return objects.sort((a,b)=>a[sortKey].localeCompare(b[sortKey]))
+        // return objects.map(object=>object[sortKey]).sort().reduce((a,b)=>a[b]=objects[b],{})
+    }
+        
 }
 
 class EscModal extends Esc {

@@ -16,7 +16,7 @@ def home(request):
         request,
         "files.html",
         {
-            "collectionId":collectionId
+            "collectionId":collectionId,
         }   
     )
     

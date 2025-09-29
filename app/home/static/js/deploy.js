@@ -4,6 +4,7 @@ class ThemeFilesDeploy extends JsForm {
         this.objectId = options.fileId||null;
         this.collectionId = options.collectionId||null;
         this.files = JSON.parse(this.options.selectedFiles);
+        this.explicitFiles = JSON.parse(this.options.explicitFiles)
         this.selectedShop = this.options.selectedShop;
         this.themes = []
         this.selectedTheme = null;
@@ -11,7 +12,13 @@ class ThemeFilesDeploy extends JsForm {
         this.fileDetails = {};
         this.targetElement = ".jsapp";
         this.render(false)
-        window.folderHandler = new FileFolders({collectionId:window.collectionId,files:this.files,noclick:true});
+        window.folderHandler = new FileFolders({
+            collectionId:window.collectionId,
+            explicitFiles:this.explicitFiles,
+            files:this.files,
+            noclick:true,
+            selectedFile:this.options.selectedFile}
+        );
         if (this.activeShop) {
             this.loadThemes(this.activeShop)
         } else {

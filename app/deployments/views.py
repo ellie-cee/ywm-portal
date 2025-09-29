@@ -23,6 +23,7 @@ def deployPayload(files=[],shopId=""):
         "collectionId":defaultCollectionId(),
         "shopId":shopId,
         "files":json.dumps(filesList(files)),
+        "explicitFiles":json.dumps(files),
         "shops":json.dumps(shopList()),
     }
 def filesList(incomingFiles):
