@@ -175,9 +175,9 @@ class DepoymentQueue extends TaskQueue {
     }
     finalize() {
         this.target.querySelector(".progress-text").textContent = "Deployment Complete"
-        console.error("finalizinr")
+        
         setTimeout(()=>{
-            console.error("dispatching")
+            
             this.options.owner.dispatchEvent(
                 new CustomEvent(
                     `${this.options.id}-complete`
@@ -219,7 +219,7 @@ class DepoymentQueue extends TaskQueue {
                 themeId: item.theme.id
             }
         ).then(response=>{
-            console.error(response)
+            
             this.nextTask()
         })
     }

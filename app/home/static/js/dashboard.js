@@ -32,7 +32,7 @@ class Dashboard extends JsForm {
         this.get(
             "/shops/list"
         ).then(response=>{
-            console.error(response)
+            
             if (response.shopList.length>0) {
                 
                 let container = this.createCell( `
@@ -81,7 +81,7 @@ class Dashboard extends JsForm {
         this.get(
             "/shops/themes"
         ).then(response=>{
-            console.error(response)
+            
             if (response.shopList.length>0) {
                 this.createCell(
                     `

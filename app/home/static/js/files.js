@@ -166,7 +166,6 @@ class ThemeFileEditor extends JsForm {
         this.listenFor(
             "deploy-file",
             event=>{
-                console.error("deploy")
 
                 let fileForm = document.querySelector("#fileFolder")
                 fileForm.querySelectorAll(`input[name="fileId"]`).forEach(input=>{
@@ -184,12 +183,12 @@ class ThemeFileEditor extends JsForm {
                     return;
                 }
                 this.loaded(false)
-                console.error("saving")
+                
                 this.post(
                     "/files/upsert",
                     formData
                 ).then(response=>{
-                    console.error(response)
+                    
                     this.loaded()    
                     fileForm.submit()
                 })
@@ -269,7 +268,7 @@ class FileFolders extends Esc {
             })
     }
     render(response,fileId) {
-        console.error(this.options)
+        
         let filesList = document.querySelector(".sidebarHolder");
         if (filesList) {
             filesList.innerHTML = `
