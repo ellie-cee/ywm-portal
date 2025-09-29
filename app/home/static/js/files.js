@@ -267,6 +267,14 @@ class FileFolders extends Esc {
                 this.render(response,fileId)
             })
     }
+    autoUncheckable(file) {
+        if (file.isCommonFile) {
+            if (file!=this.options.selectedFile || !this.options.explicitFiles.includes(file.id)) {
+                return true;
+            }
+        }
+        return false
+    }
     render(response,fileId) {
         
         let filesList = document.querySelector(".sidebarHolder");
@@ -288,7 +296,7 @@ class FileFolders extends Esc {
                                     <label for="${file.id}">
                                         <div class="on"><img src="/static/img/checkbox-on.png"></div>
                                         <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                                        <input type="checkbox" name="fileId" value="${file.id}" class="${file.id==(this.options.selectedFile || this.options.explicitFiles.includes(file.id) && !file.isCommonFile)?'':'autoUncheck'}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
+                                        <input type="checkbox" name="fileId" value="${file.id}" class="${this.autoUncheckable(file)?'autoUncheck':''}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
                                     </label>
                                     </div>
                                     <div class="name ${file.isCommonFile?' common-file':''}" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
