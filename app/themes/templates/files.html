@@ -62,6 +62,16 @@
         window.fileEditor = new ThemeFileEditor({collectionId:window.collectionId})
         //document.querySelector("#fileFolder").submit()
     })
+    document.addEventListener("ywm:file:selected",event=>{
+        file = event.detail;
+        console.error(file)
+        if (file.dataset.binary=="false") {   
+            window.fileEditor = new ThemeFileEditor({
+                fileId:file.dataset.fileId,
+                collectionId:file.dataset.collectionId
+            })        
+        }
+    })
 
     window.collectionId = "{{ collectionId }}"
     {% if request.GET.fileId %}

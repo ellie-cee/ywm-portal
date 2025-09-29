@@ -343,20 +343,14 @@ class FileFolders extends Esc {
         
                 folder.classList.toggle("open")
             });
-        
-            if (this.options.noclick) {
-                return;
-            }
             folder.querySelectorAll("li.file .name").forEach(file=>file.addEventListener("click",event=>{
                 event.stopPropagation()
-                
-                if (file.dataset.binary=="false") {
-                    
-                    window.fileEditor = new ThemeFileEditor({
-                        fileId:file.dataset.fileId,
-                        collectionId:this.options.collectionId
-                    })        
-                }
+                document.dispatchEvent(
+                    new CustomEvent(
+                        "ywm:file:selected",
+                        {bubbles:true,detail:file}
+                    )
+                )
             }))
         })
     }
