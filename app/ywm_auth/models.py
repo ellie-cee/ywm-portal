@@ -48,7 +48,6 @@ class User(models.Model):
             )
         authRequest.code = AuthRequest.generateCode()
         authRequest.expires = datetime.now(tz=pytz.UTC)
-        authRequest.ex
         authRequest.save()
         try:
             self.sendAuthEmail(authRequest)
