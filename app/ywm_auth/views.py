@@ -30,6 +30,7 @@ def loginStatus(request):
             },
             status=200
         )
+    
     return jsonResponse(
         {},
         status=404
@@ -76,7 +77,7 @@ def login(request):
     request.session["AUTHORIZATION_REQUEST"] = str(auth.id)
     return jsonResponse(
         {
-            "userEmail":user.censoredEmail()
+            "userEmail":str(user.censoredEmail())
         },
         status=200
     )

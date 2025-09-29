@@ -189,6 +189,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
     },
     'loggers': {
         'django': {
@@ -199,6 +204,11 @@ LOGGING = {
         'ywm_qs': { # Replace 'your_app_name' with your actual app name
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
+            'propagate': False, # Set to False to prevent messages from propagating to parent loggers
+        },
+         'ywm_qs': { # Replace 'your_app_name' with your actual app name
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
             'propagate': False, # Set to False to prevent messages from propagating to parent loggers
         },
         '': { # Root logger - captures logs from any Python application without a specific logger
