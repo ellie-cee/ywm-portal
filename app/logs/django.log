@@ -6222,3 +6222,11 @@ INFO 2025-09-29 18:52:27,420 autoreload 892301 130096486476672 /home/ellie/works
 INFO 2025-09-29 18:52:27,420 autoreload 892301 130096486476672 /home/ellie/workspace/freelance/app/ywm-qs2/app/themes/views.py changed, reloading.
 INFO 2025-09-29 18:52:27,718 autoreload 909115 128644345990016 Watching for file changes with StatReloader
 INFO 2025-09-29 18:52:27,718 autoreload 909115 128644345990016 Watching for file changes with StatReloader
+INFO 2025-09-29 18:56:03,671 autoreload 909115 128644345990016 /home/ellie/workspace/freelance/app/ywm-qs2/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-29 18:56:03,671 autoreload 909115 128644345990016 /home/ellie/workspace/freelance/app/ywm-qs2/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-29 18:56:03,967 autoreload 912042 126787145964416 Watching for file changes with StatReloader
+INFO 2025-09-29 18:56:03,967 autoreload 912042 126787145964416 Watching for file changes with StatReloader
+INFO 2025-09-29 18:56:34,191 autoreload 912042 126787145964416 /home/ellie/workspace/freelance/app/ywm-qs2/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-29 18:56:34,191 autoreload 912042 126787145964416 /home/ellie/workspace/freelance/app/ywm-qs2/app/ywm_qs/settings.py changed, reloading.
+INFO 2025-09-29 18:56:34,487 autoreload 912433 128189321595776 Watching for file changes with StatReloader
+INFO 2025-09-29 18:56:34,487 autoreload 912433 128189321595776 Watching for file changes with StatReloader
