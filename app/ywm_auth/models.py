@@ -6,11 +6,13 @@ import random
 import pytz
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+import logging
 
 utc = pytz.UTC
 
 
 # Create your models here.
+logger = logging.Logger(__file__)
 
 class UserPermissions(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
@@ -47,7 +49,10 @@ class User(models.Model):
         authRequest.code = AuthRequest.generateCode()
         authRequest.expires = datetime.now()+timedelta(minutes=60)
         authRequest.save()
-        self.sendAuthEmail(authRequest)
+        try:
+            self.sendAuthEmail(authRequest)
+        except Exception as e:
+            logger.error(e)
         
         return authRequest
     def sendAuthEmail(self,authRequest):
