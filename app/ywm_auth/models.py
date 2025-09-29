@@ -49,10 +49,10 @@ class User(models.Model):
         authRequest.code = AuthRequest.generateCode()
         authRequest.expires = datetime.now(tz=pytz.UTC)
         authRequest.save()
-        try:
-            self.sendAuthEmail(authRequest)
-        except Exception as e:
-            logger.error(e)
+        #try:
+        self.sendAuthEmail(authRequest)
+        #except Exception as e:
+        #logger.error(e)
         
         return authRequest
     def sendAuthEmail(self,authRequest):
