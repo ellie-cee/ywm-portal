@@ -42,7 +42,6 @@ def showFiles(request,collectionId):
 def loadFile(request,fileId):
     
     file = ThemeFile.objects.get(id=fileId)
-    print(json.dumps(file.toDict(),indent=1))
     return jsonResponse(
         file.toDict(),
         status=200

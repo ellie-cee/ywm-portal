@@ -6218,3 +6218,7 @@ WARNING 2025-09-29 18:50:58,786 log 892301 130096412858048 Not Found: /.well-kno
 WARNING 2025-09-29 18:50:58,786 log 892301 130096412858048 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 WARNING 2025-09-29 18:50:58,786 basehttp 892301 130096412858048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 9265
 WARNING 2025-09-29 18:50:58,786 basehttp 892301 130096412858048 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 9265
+INFO 2025-09-29 18:52:27,420 autoreload 892301 130096486476672 /home/ellie/workspace/freelance/app/ywm-qs2/app/themes/views.py changed, reloading.
+INFO 2025-09-29 18:52:27,420 autoreload 892301 130096486476672 /home/ellie/workspace/freelance/app/ywm-qs2/app/themes/views.py changed, reloading.
+INFO 2025-09-29 18:52:27,718 autoreload 909115 128644345990016 Watching for file changes with StatReloader
+INFO 2025-09-29 18:52:27,718 autoreload 909115 128644345990016 Watching for file changes with StatReloader
