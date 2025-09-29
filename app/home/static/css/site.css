@@ -398,7 +398,7 @@ ul.sidebar-menu {
     .sidebarHolder {
       margin-left:16px;
       min-height: 65%;
-      max-height: 75%;
+      max-height: 65%;
       overflow: auto;
     }
     .instructions {
