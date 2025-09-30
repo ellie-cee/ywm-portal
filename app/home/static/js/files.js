@@ -14,9 +14,9 @@ class ThemeFileEditor extends JsForm {
                         history.replaceState(null, "", `/files?fileId=${this.fileId}`);
                         this.fileDetails = payload
                         this.collectionId = payload.collection;
-                        if (!document.querySelector("#fileFolder")) {
+                        //if (!document.querySelector("#fileFolder")) {
                             this.loadFolders(payload.collection,this.objectId)
-                        }
+                        //}
                         this.render()
                         break;
                     case 404:
@@ -94,10 +94,13 @@ class ThemeFileEditor extends JsForm {
         ]
     }
     fileExists(folder,fileName,fileId) {
+        console.error(folder,fileName)
         try {
             let file = document.querySelector(`li.folder[data-name="${folder}"]`)
                 .querySelector(`li.file[data-name="${fileName}"]`);
-                
+            if (file==null) {
+                return false;
+            }
                 if (file.dataset.id==fileId) {
                     return false;
                 } else {
@@ -210,7 +213,7 @@ class ThemeFileEditor extends JsForm {
         this.loadFolders(this.fileDetails.collection,this.fileId);
         window.setTimeout(
             ()=>{
-                history.replaceState(null, "", `/files?fileId=${this.fileId}`);
+                history.replaceState(null, "", `/files?fileId=${this.objectId}`);
                 this.render()
             },1000
         )
@@ -250,6 +253,7 @@ class FileFolders extends Esc {
                 fileId:this.options.fileId,
                 collectionId:this.options.collectionId
             })
+            this.loadFolders()
         } else {
             this.loadFolders(null,this.collectionId)
         }

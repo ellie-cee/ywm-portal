@@ -65,6 +65,7 @@
     document.addEventListener("ywm:file:selected",event=>{
         file = event.detail;
         console.error(file)
+
         if (file.dataset.binary=="false") {   
             window.fileEditor = new ThemeFileEditor({
                 fileId:file.dataset.fileId,
@@ -72,9 +73,17 @@
             })        
         }
     })
+    document.addEventListener("ywm:folders:load",event=>{
+        try {
+            window.folderHandler.loadFolders()
+        } catch(e) {
+            
+        }
+    })
 
     window.collectionId = "{{ collectionId }}"
     {% if request.GET.fileId %}
+    console.error("Dewqdewq")
         window.folderHandler = new FileFolders({
             fileId:"{{ request.GET.fileId }}",
             collectionId:window.collectionId,
