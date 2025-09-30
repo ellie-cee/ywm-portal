@@ -8,7 +8,6 @@ from django.conf import settings
 
 logger = logging.Logger(__name__)
 
-
 # Create your views here.
 
 @requiresLogin
@@ -31,3 +30,6 @@ def jsonResponse(payload,status=200):
     )
 def getJsonPayload(request):
     return json.loads(request.body.decode("utf-8"))
+
+def throwerror(request):
+    x = 24332/0

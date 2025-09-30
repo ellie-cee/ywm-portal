@@ -23,7 +23,7 @@ class ThemeFileEditor extends JsForm {
                         break;
                 }
             }).catch(error=>{
-                this.showError(e.message)
+                this.showError(error.message)
             })
         }
         this.render()

@@ -40,7 +40,6 @@ def showFiles(request,collectionId):
     )
 @requiresLogin
 def loadFile(request,fileId):
-    
     file = ThemeFile.objects.get(id=fileId)
     return jsonResponse(
         file.toDict(),
