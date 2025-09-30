@@ -30,7 +30,7 @@ configDir = os.path.join(baseDir,"configs")
 #what
 
 env = Environment(loader=FileSystemLoader(configDir))
-
+allowEmpty = ["DJANGO_APPS","DJANGO_CONTEXT_PROCESSORS","DJANGO_MIDDLEWARE"]
 
 tmpdir = pathlib.Path(os.path.join(baseDir,"tmp"))
 if not tmpdir.exists():
@@ -56,6 +56,10 @@ def getValue(key=None,default=None,label=None,mustBe=[]):
         if inputValue == "":
             if default is not None and default!="":
                 value = default
+            elif key in allowEmpty:
+                print("dewdewq")
+                value = inputValue
+                break
         elif len(mustBe)>0 and inputValue in mustBe:
             value = inputValue
         else:
@@ -80,7 +84,7 @@ if args.shopify:
     config = buildShopifyProfile(config)
 
 
-    
+
 readFilename = ".env"
 if not pathlib.Path(readFilename).exists():
     readFilename = "configs/env-default"
@@ -92,7 +96,7 @@ for line in open(readFilename).readlines():
     key = line[0:line.index("=")]
     
     value = line[line.index("=")+1:len(line)].strip()
-    if key in ["DB_PASSWORD","DJANGO_SECRET"]:
+    if key in ["DB_PASSWORD","DJANGO_SECRET","DJANGO_ENCRYPTION_KEY"]:
         if value is not None and value!="":
             config[key] = value
         else:
