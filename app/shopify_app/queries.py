@@ -23,7 +23,7 @@ def getThemes():
     for themeGroup in GraphQL().iterable(
         """
         query getThemes($after:String) {
-            themes(first:100,after:$after) {
+            themes(first:20,after:$after) {
                 nodes {
                     id
                     name
