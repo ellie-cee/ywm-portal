@@ -466,6 +466,7 @@ ul.sidebar-menu {
           display: flex;
           gap: 16px;
           cursor: pointer;
+          width: max-content;
           .name {
             font-weight: bold
           }
