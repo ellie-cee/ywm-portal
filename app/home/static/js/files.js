@@ -22,6 +22,8 @@ class ThemeFileEditor extends JsForm {
                     case 404:
                         break;
                 }
+            }).catch(error=>{
+                this.showError(e.message)
             })
         }
         this.render()
@@ -128,7 +130,7 @@ class ThemeFileEditor extends JsForm {
                     formData
                 ).then(response=>{
                     this.handleResponse(response,formData)
-                })
+                }).catch(error=>this.showError(error.message))
 
             }
         )
@@ -148,6 +150,8 @@ class ThemeFileEditor extends JsForm {
                 ).then(response=>{
                     
                     this.handleResponse(response,formData)
+                }).catch(error=>{
+                    this.showError(error.message)
                 })
             }
         )
@@ -194,7 +198,7 @@ class ThemeFileEditor extends JsForm {
                     
                     this.loaded()    
                     fileForm.submit()
-                })
+                }).catch(error=>error.message)
                 
             }
         )
@@ -269,6 +273,8 @@ class FileFolders extends Esc {
             `/files/folders/${this.options.collectionId}`).then(response=>response.json()).then(response=>{
                 
                 this.render(response,fileId)
+            }).catch(error=>{
+                this.showError(error.message)
             })
     }
     autoUncheckable(file) {

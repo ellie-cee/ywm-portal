@@ -82,7 +82,7 @@ class ShopifySite extends JsForm {
                 ).then(response=>{
                     this.loaded()
                     this.handleResponse(response,formData,`${formData.shopName} Created`)
-                })
+                }).catch(error=>this.showError(error.message))
             }
         );
         this.listenFor(
@@ -96,7 +96,7 @@ class ShopifySite extends JsForm {
                 ).then(response=>{
                     this.loaded()
                     this.handleResponse(response,formData,`${formData.shopName} Updated`)
-                })
+                }).catch(error=>this.showError(error.message))
             }
         );
         this.listenFor(
@@ -119,7 +119,7 @@ class ShopifySite extends JsForm {
                         break;
                             
                 }
-            });
+            }).catch(error=>this.showError(error.message));
         })
         this.listenFor(
             "delete",
@@ -129,7 +129,7 @@ class ShopifySite extends JsForm {
                     this.loaded()
                     this.showMessage(`Deleted ${this.shopDetails.shopName}`)
                     location.href="/shops"
-                })
+                }).catch(error=>this.showError(error.message))
             }
         );
         this.listenFor(

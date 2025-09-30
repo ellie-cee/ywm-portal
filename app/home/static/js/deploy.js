@@ -221,7 +221,7 @@ class DepoymentQueue extends TaskQueue {
         ).then(response=>{
             
             this.nextTask()
-        })
+        }).catch(error=>this.showError(error.message))
     }
     
 }

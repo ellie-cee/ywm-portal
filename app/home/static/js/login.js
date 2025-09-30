@@ -27,7 +27,7 @@ class Login extends JsForm {
                    this.loginState = "login"
             }
             this.render()
-        })
+        }).catch(error=>this.showError(error.message))
     }
     
     formName() {
@@ -91,7 +91,7 @@ class Login extends JsForm {
                             break;
                     }
                     this.render()
-                });
+                }).catch(error=>this.showError(error.message));
             }
         );
         this.listenFor(
@@ -115,7 +115,7 @@ class Login extends JsForm {
                                 break;
                         }
                     }
-                )
+                ).catch(error=>this.showError(error.message))
             }
         )
         this.listenFor(
@@ -128,7 +128,7 @@ class Login extends JsForm {
                 ).then(response=>{
                     this.loaded()
                     this.showMessage("code resent")
-                })
+                }).catch(error=>this.showError(error.message))
             }
         )
         this.listenFor(
@@ -141,7 +141,7 @@ class Login extends JsForm {
                 ).then(response=>{
                     this.loginState = "login"
                     this.render()
-                })
+                }).catch(error=>this.showError(error.message))
             }
         )
     }
