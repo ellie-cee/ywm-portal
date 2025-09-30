@@ -36,13 +36,32 @@ class ThemeFileEditor extends JsForm {
             )
         )
     }
+    folders() {
+        return [
+            "assets",
+            "blocks",
+            "config",
+            "layout",
+            "locales",
+            "sections",
+            "snippets",
+            "templates",
+            "templates/customer",
+            "templates/metaobject"
+        ]
+    }
     formContents() {
         return `
             <input type="hidden" name="collectionId" value="${this.collectionId}">
             <div class="formRow">
                 <div class="formField">
                     <label>Folder</label>
-                    <div><input type="text" name="folder" value="${this.valueOf(this.fileDetails.folder)}" required></div>
+                    <div>
+                        <select name="folder" required>
+                            <option>Select Folder</option>
+                            ${this.folders().map(folder=>`<option value="${folder}"${this.fileDetails.folder==folder?' selected':''}>${folder}</option>`).join("\n")}
+                        </select>
+                     </div>
                 </div>
                 <div class="formField">
                     <label>Filename</label>
