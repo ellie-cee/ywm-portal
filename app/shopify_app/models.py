@@ -7,6 +7,9 @@ from .queries import authorizedScopes
 from datetime import datetime
 from themes.models import ThemeFile
 import shopify
+import logging
+
+logger = logging.Logger(__file__)
 
 import uuid
 
@@ -82,10 +85,11 @@ class ShopifySite(models.Model,IdAware):
     
     def getThemes(self):
         self.startSession()
-        themes = GraphQL().run(
+        themes = []
+        for group in GraphQL().iterable(
             """
             query getThemes($after:String) {
-                themes(first:100,after:$after) {
+                themes(first:20,after:$after) {
                     nodes {
                         id
                         name
@@ -100,8 +104,15 @@ class ShopifySite(models.Model,IdAware):
             {
                 "after":None
             }
-        )
-        return [{"name":x.get("name"),"id":x.get("id")} for x in themes.nodes("data.themes")]
+        ):
+            for theme in group:
+                themes.append(
+                    {
+                        "name":theme.get("name"),
+                        "id":theme.get("id")
+                    }    
+                )
+        return themes
     def deployFile(self,file:ThemeFile=None,themeId=None):
         self.startSession()
         return GraphQL().run(

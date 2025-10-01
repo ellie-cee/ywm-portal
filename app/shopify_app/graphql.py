@@ -1,3 +1,4 @@
+import math
 import urllib.error
 import shopify
 import json
@@ -53,6 +54,8 @@ class GqlReturn(SearchableDict):
         return [GqlReturn(x) for x in self.search(f"{path}.nodes",[])]
     def throttleRemaining(self):
         return self.search("extensions.cost.throttleStatus.currentlyAvailable",0)
+    def maxThrottle(self):
+        return self.search("extensions.cost.throttleStatus.maximumAvailable",0)    
     
     def isDevThrottled(self):
         errors = self.findErrors(self.data)
@@ -179,12 +182,16 @@ class GraphQL:
             )
         retVal = GqlReturn(ret)
         
+        
+        
 
-        if throttle is not None:
-            remaining = retVal.throttleRemaining()
-            if remaining<throttle and remaining>0:
-                log(f"throttling at {retVal.throttleRemaining()}")
-                time.sleep(2)
+        
+        remaining = retVal.throttleRemaining()
+        max = retVal.maxThrottle()
+        percentageRemaining = math.ceil((remaining/max)*100)
+        log(f"{remaining} of {max}")
+        if percentageRemaining<25:
+            log(f"throttling at {remaining}")
         
         return retVal
     def iterable(self,query,params,dataroot="data.products"):
@@ -208,7 +215,7 @@ class GraphQlIterable(GraphQL):
         self.params["after"] = self.cursor
         ret = self.run(self.query,self.params)
         
-        
+        ret.dump()
         if ret.get("data") is not None:
             try:
                 self.dataroot = f'data.{next(iter(ret.search("data").keys()),None)}'
