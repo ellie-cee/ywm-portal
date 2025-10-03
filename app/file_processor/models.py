@@ -37,9 +37,10 @@ class FileProcessor(models.Model):
         themeFileContents = None
         if themeFile is None:
             return {"error":f"{self.filePath} does not exist in the selected theme","data":{}}
-        match self.processorType.slug:
-            case "search-and-replace":
-                themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"))
+        slug = self.processorType.slug 
+        
+        if slug == "search-and-replace":
+            themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"))
                 
         if themeFileContents is not None:
             if isinstance(themeFileContents,dict):
@@ -59,15 +60,15 @@ class FileProcessor(models.Model):
             "data":{}
         }
     def appliedSignature(self):
-        match(self.filePath.split(".")[-1].lower()):
-            case "js":
-                return f"/* deployment signature {str(self.id)} */"
-            case "css":
-                return f"/* deployment signature {str(self.id)} */"
-            case "html":
-                return f"<!-- deployment signature {str(self.id)} -->"
-            case "liquid":
-                return "{%comment%}"+f" deployment signature {str(self.id)}"+"{% endcomment %}"
+        extension = self.filePath.split(".")[-1].lower()
+        if extension=="js":
+            return f"/* deployment signature {str(self.id)} */"
+        elif extension=="css":
+            return f"/* deployment signature {str(self.id)} */"
+        elif extension=="html":
+            return f"<!-- deployment signature {str(self.id)} -->"
+        elif extension=="liquid":
+            return "{%comment%}"+f" deployment signature {str(self.id)}"+"{% endcomment %}"
                 
     def applySearchAndReplace(self,fileContents=""):
         config:dict = self.configuration

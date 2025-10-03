@@ -63,33 +63,34 @@ def executeDeployment(request):
     payload = getJsonPayload(request)
     shopifySite = ShopifySite.objects.get(id=jpath("shop.id",payload))
     themeId = jpath("theme.id",payload)
-    match payload.get("type"):
-        case "file":
-            file = ThemeFile.objects.get(id=jpath("file.id",payload))
-            ret = shopifySite.deployFile(
-                file=file,
-                themeId=jpath("theme.id",payload)
+    type = payload.get("type")
+    
+    if type == "file":
+        file = ThemeFile.objects.get(id=jpath("file.id",payload))
+        ret = shopifySite.deployFile(
+            file=file,
+            themeId=jpath("theme.id",payload)
+        )
+        return jsonResponse({
+            "message":"Deployed",
+            "data":ret.data,
+            
+        })
+    elif type ==  "processor":
+        processor = FileProcessor.objects.get(id=jpath("processor.id",payload))
+        ret = processor.apply(shopId=str(shopifySite.id),themeId=themeId)
+        if isinstance(ret,GqlReturn):    
+            return jsonResponse(
+                {
+                    "message":"Successfully applied",
+                    "data":ret.data
+                }
             )
-            return jsonResponse({
-                "message":"Deployed",
-                "data":ret.data,
-                
-            })
-        case "processor":
-            processor = FileProcessor.objects.get(id=jpath("processor.id",payload))
-            ret = processor.apply(shopId=str(shopifySite.id),themeId=themeId)
-            if isinstance(ret,GqlReturn):    
-                return jsonResponse(
-                    {
-                        "message":"Successfully applied",
-                        "data":ret.data
-                    }
-                )
-            else:
-                return jsonResponse(
-                    ret,
-                    404
-                )
+        else:
+            return jsonResponse(
+                ret,
+                404
+            )
     return jsonResponse(
         {
             "message":"Not found"
