@@ -329,7 +329,7 @@ ul.sidebar-menu {
 
 }
 .hidden {
-  display: none;
+  display: none!important;
 }
 .labelledInput {
   display:flex;
