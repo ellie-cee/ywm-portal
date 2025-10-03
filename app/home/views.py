@@ -2,9 +2,12 @@ import os
 from django.shortcuts import render
 from ywm_auth.decorators import requiresLogin
 from django.http import HttpResponse
+from .models import SiteNav
 import json
 import logging
 from django.conf import settings
+from django.core.serializers import serialize
+from django.forms.models import model_to_dict
 
 logger = logging.Logger(__name__)
 
@@ -12,6 +15,9 @@ logger = logging.Logger(__name__)
 
 @requiresLogin
 def dashboard(request):
+    
+    
+    
     return render(
         request,
         "dashboard.html",

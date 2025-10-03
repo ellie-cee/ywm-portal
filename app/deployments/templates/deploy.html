@@ -13,6 +13,24 @@
     .listing:has(input:checked) button[data-action-type="deploy"] {
         display:block;
     }
+    .files-to-deploy {
+        display:flex;
+        gap: 16px;
+
+    }
+    .deploy-file {
+        background-color:#fcffdd;
+        padding: 12px;
+        border-radius: 10px;
+    }
+    form:has(.empty) .requires-theme,form:has(.unselected) .requires-theme {
+            display: none;
+    }
+    .applyTransforms {
+       display:grid;
+       grid-template-columns: repeat(3,1fr);
+    }
+    
 </style>
 <script src="/static/js/files.js"></script>
 <script src="/static/js/deploy.js"></script>
@@ -56,6 +74,7 @@
                 "ywm:folders:uncheck",
                 {detail:null,bubbles:true}
             ))
+            window.deployer.render()
         }
     })
     
@@ -69,6 +88,19 @@
             selectedShop:"{{ shopId }}"
         }
     )
+    document.addEventListener("ywm:file:selected",event=>{
+        file = event.detail;
+        document.querySelector("#deployForm").dispatchEvent(
+            new CustomEvent(
+                "ywm:deploy:render",
+                {bubbles:true}
+            )
+        )
+    })
+    document.addEventListener("ywm:folders:selectionChanged",event=>{
+        window.deployer.render()
+    })
+    
 </script>
 <!-- deqwdewq -->
 {% endblock %}

@@ -83,6 +83,39 @@ class ShopifySite(models.Model,IdAware):
                 missingScopes.append(requiredScope.scopeName)
         return missingScopes
     
+    def getThemeFile(self,themeId,fileName):
+        self.startSession()
+        
+        fileResults = GraphQL().run(
+            """
+            query getThemeFile($themeId:ID!,$fileNames:[String]) {
+                theme(id: $themeId) {
+                    id
+                    name
+                    role
+                    files(filenames: $fileNames, first: 1) {
+                        nodes {
+                            body {
+                            ... on OnlineStoreThemeFileBodyText {
+                                content
+                            }
+                        }
+                    }
+                    }
+                }
+            }
+            """,
+            {
+                "themeId":themeId,
+                "fileNames":[fileName]
+                
+            }
+        )
+        try:
+            return fileResults.nodes("data.theme.files")[0]
+        except:
+            return None
+        
     def getThemes(self):
         self.startSession()
         themes = []
@@ -113,8 +146,13 @@ class ShopifySite(models.Model,IdAware):
                     }    
                 )
         return themes
-    def deployFile(self,file:ThemeFile=None,themeId=None):
+    def deployFile(self,file:ThemeFile=None,themeId=None,fileName=None,fileContents=None):
+        if file is None:
+            if fileName is None or fileContents is None:
+                return None
+            
         self.startSession()
+        
         return GraphQL().run(
             """
             mutation themeFilesUpsert($files: [OnlineStoreThemeFilesUpsertFileInput!]!, $themeId: ID!) {
@@ -133,7 +171,7 @@ class ShopifySite(models.Model,IdAware):
                 "themeId":themeId,
                 "files":[
                     {
-                        "filename":f"{file.folder}/{file.fileName}",
+                        "filename":f"{file.folder}/{file.fileName}" if file else fileName,
                         "body":{
                             "type":"BASE64",
                             "value":file.base64Encoded()

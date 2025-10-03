@@ -1,9 +1,11 @@
 import sys
+import uuid
 from jmespath import search as jpath
 import json
 from dict_recursive_update import recursive_update
 import logging
-
+from django.db import models
+from django.forms.models import model_to_dict
 logger = logging.getLogger(__name__)
 
 
@@ -82,3 +84,20 @@ class SearchableDict:
                 
             else:
                 logger.info(ret)
+def modelToJson(model):
+    return model_to_dict(model)|{"id":str(model.id)}
+def jsonify(value):
+        if isinstance(value,models.Model):
+            return jsonify(modelToJson(value))
+        elif isinstance(value,dict):
+            ret = {}
+            for key,value in value.items():
+                if isinstance(value,uuid.UUID):
+                    ret[key] = str(value)
+                else:
+                    ret[key] = jsonify(value)
+            return ret
+        elif isinstance(value,list):
+            return [jsonify(x) for x in value]
+        else:
+            return value

@@ -122,37 +122,21 @@ class JsForm extends Esc {
         this.uuid = crypto.randomUUID()
         this.options=options;
         this.targetElement = ".jsapp";
-        this.listeners = [];
         this.objectId = options.objectId||null;
-    }
-    messageElement() {
-        return document.querySelector(".request-response")
     }
     disappear() {
         this.target().innerHTML = ``;
     }
-    showError(message) {
-        let footer = this.messageElement()
-        footer.classList.add("error")
-        footer.textContent=message;
-    }
-    showMessage(message) {
-        let footer = this.messageElement()
-        footer.classList.remove("error")
-        footer.textContent=message;
-    }
     serializeForm(form) {
         return Object.fromEntries(new FormData(form).entries())
     }
-    target() {
-        
+    target() {    
         return document.querySelector(this.targetElement);
     }
     formName() {
         return "form"
     }
     formTarget() {
-
         return document.querySelector(`#${this.formName()}`)
     }
     formHeader() {
@@ -170,9 +154,22 @@ class JsForm extends Esc {
     valueOf(fieldValue) {
         return fieldValue||"";
     }
+    hiddenField(name,value) {
+        if (value) {
+            return `<input type="hidden" name="${name}" value="${this.objectId}">`
+        }
+        return ''
+    }
+    objectIdField() {
+        return this.hiddenField("objectId",this.objectId);
+    }
+    fieldValue(field)  {
+
+    }
     render(isLoaded=true) {
         this.target().innerHTML = `
             <form id="${this.formName()}" class="jsform ${isLoaded?'loaded':''}">
+                ${this.objectIdField()}
                 <div class="form-loading">
                     <img src="/static/img/loading.gif">
                 </div>
@@ -184,7 +181,6 @@ class JsForm extends Esc {
                 </div>
                 <div class="subtitle">${this.subtitle()}</div>
                 <div class="request-response"></div>
-                
                 <div class="formBody">
                     ${this.formContents()}
                 </div> 
@@ -203,14 +199,10 @@ class JsForm extends Esc {
                 </div>
             </form>
         `
-        if (this.hasObjectId()) {
-            this.setObjectId(this.objectId)
-        }
-        
         this.setupEvents();
     }
     formContents() {
-        return "blorp"
+        return ""
     }
     eventsPrefix() {
         return `ywm:${this.formName()}`
@@ -219,10 +211,6 @@ class JsForm extends Esc {
         return `${this.eventsPrefix()}:${eventName}`
     }
     listenFor(eventName,callBack=null) {
-        
-        
-        
-        this.listeners.push(eventName)
         this.formTarget().addEventListener(
             this.eventName(eventName),
             event=>{
@@ -243,6 +231,7 @@ class JsForm extends Esc {
             }
         );
         notyf.success(message);
+        this.loaded()
     }
     showError(message,permanent=false) {
 
@@ -263,10 +252,10 @@ class JsForm extends Esc {
             );
         }
         notyf.error(message)
+        this.loaded()
     }
     
     loaded(loaded=true) {
-        
         if (loaded) {
             this.formTarget().classList.add("loaded")
         } else {
@@ -283,7 +272,6 @@ class JsForm extends Esc {
         )
     }
     setupEvents() {
-        
         let form = this.formTarget()
         form.addEventListener("submit",event=>{
             event.preventDefault();
@@ -314,18 +302,6 @@ class JsForm extends Esc {
                 input.type="password";
             }
             }));
-        
-        this.formTarget().querySelectorAll("textarea").forEach(textArea=>{
-            textArea.addEventListener("keydown",event=> {
-                if (event.key=="Tab") {
-                    event.preventDefault();
-                    let position = textArea.selectionStart;
-                    
-                    let text = textArea.value;    
-                    textArea.value = text.slice(0, position) + "   " + text.slice(position);
-                }
-            })
-        })
     }
     setObjectId(id) {
         if (id==null) {
@@ -344,8 +320,9 @@ class JsForm extends Esc {
             form.appendChild(input)
         }
     }
-
 }
+
+
 
 class TaskQueue extends JsForm {
     constructor(options) {
@@ -419,3 +396,41 @@ class TaskQueue extends JsForm {
     }
 }
 
+class Fields {
+    static textField({name,value,required=false,dataset={}}) {
+        return `<input type="text" name="${name}" value="${value?value:''}" ${required?'required':''} ${Fields.renderDataSet(dataset)}>`
+    }
+    static renderDataSet(dataset={}) {
+        
+        return Object.entries(dataset).map(kvp=>`data-${kvp[0]}="${kvp[1]}"`).join(" ")
+    }
+    static flatSelectBox({name,values,selectedValue=null,required=false}) {
+        return `
+            <select name="${name}" ${required?'required':''}>
+                <option value="">Select</option>
+                ${values.map(entry=>`<option value="${entry}" ${entry.id==selectedValue?'selected':''}>${entry}</option>`).join("n")}
+            </select>
+        `
+    }
+    static selectBox({name,values,selectedValue=null,required=false,label="name",dataset={}}) {
+        return `
+            <select name="${name}" ${required?'required':''} ${Fields.renderDataSet(dataset)}>
+                <option value="">Select</option>
+                ${values.map(entry=>`<option value="${entry.id}" ${entry.id==selectedValue?'selected':''}>${entry[label]}</option>`).join("n")}
+            </select>
+        `
+    }
+    static checkbox(name,label,checked=false,radio=false,required=false,dataset={}) {
+        return `
+        <div class="selector">
+            <label for="checkbox-${name}">
+
+                <div class="on"><img src="/static/img/checkbox-on.png"></div>
+                <div class="off"><img src="/static/img/checkbox-off.png"></div>
+                <input type="checkbox" name="${name}" value="${value}" class="" id="checkbox-${name}" ${fields.renderDataSet(dataset)}>
+                <div class="label">${label}</div>
+            </label>
+        </div>
+        `
+    }
+}

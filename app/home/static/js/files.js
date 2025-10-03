@@ -115,7 +115,6 @@ class ThemeFileEditor extends JsForm {
         ]
     }
     fileExists(folder,fileName,fileId) {
-        console.error(folder,fileName)
         try {
             let file = document.querySelector(`li.folder[data-name="${folder}"]`)
                 .querySelector(`li.file[data-name="${fileName}"]`);
@@ -365,6 +364,14 @@ class FileFolders extends Esc {
                 file.checked=!file.checked;
             })
         })
+        this.formTarget().querySelectorAll('[name="fileId"]').forEach(checkbox=>checkbox.addEventListener("change",event=>{
+            document.dispatchEvent(
+                new CustomEvent(
+                    "ywm:folders:selectionChanged",
+                    {bubbles:true,detail:checkbox}
+                )
+            )
+        }))
         let folders = Array.from(document.querySelectorAll("li.folder"));
         document.querySelectorAll("li.folder").forEach((folder,index)=>{
         
@@ -385,6 +392,8 @@ class FileFolders extends Esc {
     }
     static collectFiles() {
         return Array.from(document.querySelectorAll("#fileFolder input:checked")).map(checked=>checked.value)
-
+    }
+    static collectFilenames() {
+        return Array.from(document.querySelectorAll("#fileFolder input:checked")).map(checked=>checked.dataset.fileName)
     }
 }

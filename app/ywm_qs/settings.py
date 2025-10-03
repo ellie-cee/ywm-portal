@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'shopify_app.apps.ShopifyAppConfig',
     'themes.apps.ThemesConfig',
     'deployments.apps.DeploymentsConfig',
+    'file_processor.apps.FileProcessorConfig',
     'anymail'
 ]
 

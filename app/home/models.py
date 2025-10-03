@@ -14,7 +14,7 @@ class BaseModel(models.Model):
 
 
 class SiteNav(models.Model,IdAware):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False,null=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4,null=False)
     #permission = models.CharField(max_length=64)
     url = models.CharField(max_length=255,default="/")
     label = models.CharField(max_length=255)

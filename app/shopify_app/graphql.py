@@ -189,7 +189,6 @@ class GraphQL:
         remaining = retVal.throttleRemaining()
         max = retVal.maxThrottle()
         percentageRemaining = math.ceil((remaining/max)*100)
-        log(f"{remaining} of {max}")
         if percentageRemaining<25:
             log(f"throttling at {remaining}")
         

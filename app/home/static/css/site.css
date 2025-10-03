@@ -478,7 +478,10 @@ ul.sidebar-menu {
     }
   }
 }
-
+[data-clickable] {
+  cursor: pointer;
+  
+}
 .selector {
   display: flex;
   align-items: center;
@@ -488,6 +491,9 @@ ul.sidebar-menu {
   }
   label {
     cursor: pointer;
+    display: flex;
+    gap:8px;
+    font-weight:900;
   }
   label .on, label:has(input:checked) .off {
     display:none;

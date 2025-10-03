@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content%}
+<style type="text/css">
+    button.requires-id {
+        display:none;
+    }
+    form:has(input[name="shopId"]) button.requires-id {
+        display:block;
+    }
+    form .create-only {
+        display:none;
+    }
+    form:has(.serialize) .create-only {
+        display:block;
+    }
+    li[data-rule-id] {
+        font-weight: bold;
+        margin-left: 16px!important;
+        padding:16px;
+    }
+</style>
+<script src="/static/js/rules.js"></script>
+<div class="content-with-sidebar">
+    <div class="listing">
+        <ul class="sidebar-options">
+        </ul>
+        <div><a href="/rules?action=new">New Rule</a></div>
+    </div>
+    <div class="jsapp"</div>
+</div>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded",event=>{        
+    {% if request.GET.ruleId %}
+        window.rulesForm = new RulesCrud({objectId:"{{request.GET.ruleId}}"})
+    {% elif  request.GET.action == "new" %}
+        window.rulesForm = new RulesCrud({})
+    {% endif %}
+    window.listings = new RulesListing()
+    // const 
+});
+    
+</script>
+{% endblock %}
