@@ -185,12 +185,14 @@ class GraphQL:
         
         
 
-        
-        remaining = retVal.throttleRemaining()
-        max = retVal.maxThrottle()
-        percentageRemaining = math.ceil((remaining/max)*100)
-        if percentageRemaining<25:
-            log(f"throttling at {remaining}")
+        try:
+            remaining = retVal.throttleRemaining()
+            max = retVal.maxThrottle()
+            percentageRemaining = math.ceil((remaining/max)*100)
+            if percentageRemaining<25:
+                log(f"throttling at {remaining}")
+        except:
+            logger.error(json.dumps(retVal.data,indent=1))
         
         return retVal
     def iterable(self,query,params,dataroot="data.products"):

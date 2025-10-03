@@ -154,7 +154,7 @@ class ShopifySite extends JsForm {
                 `)
                 break;
             case 404:
-                this.objectId(response.shop.id)
+                this.objectId = response.shop.id
                 this.showError(`
                     The credientials you have supplied are incomplete. Please make sure the following scopes are enabled:
                     <ul>${response.scopesMissing.map(scope=>`<li>${scope}</li>`).join("")}

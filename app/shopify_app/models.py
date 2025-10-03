@@ -8,6 +8,7 @@ from datetime import datetime
 from themes.models import ThemeFile
 import shopify
 import logging
+import base64
 
 logger = logging.Logger(__file__)
 
@@ -88,7 +89,7 @@ class ShopifySite(models.Model,IdAware):
         
         fileResults = GraphQL().run(
             """
-            query getThemeFile($themeId:ID!,$fileNames:[String]) {
+            query getThemeFile($themeId:ID!,$fileNames:[String!]) {
                 theme(id: $themeId) {
                     id
                     name
@@ -146,11 +147,15 @@ class ShopifySite(models.Model,IdAware):
                     }    
                 )
         return themes
-    def deployFile(self,file:ThemeFile=None,themeId=None,fileName=None,fileContents=None):
+    def deployFile(self,file:ThemeFile=None,themeId=None,fileName=None,fileContents:str=None):
         if file is None:
             if fileName is None or fileContents is None:
                 return None
-            
+        encodedContent = None
+        if file is not None:
+            encodedContent = file.base64Encoded()
+        else:
+            encodedContent = base64.b64encode(fileContents.encode("utf-8")).decode("ascii")
         self.startSession()
         
         return GraphQL().run(
@@ -174,7 +179,7 @@ class ShopifySite(models.Model,IdAware):
                         "filename":f"{file.folder}/{file.fileName}" if file else fileName,
                         "body":{
                             "type":"BASE64",
-                            "value":file.base64Encoded()
+                            "value":encodedContent
                         }
                     }
                 ]

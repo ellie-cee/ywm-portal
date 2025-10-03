@@ -11,8 +11,8 @@ class ThemeFilesDeploy extends JsForm {
         this.shops = JSON.parse(this.options.shops);
         this.fileDetails = {};
         this.targetElement = ".jsapp";
-        this.rules = []
-        this.selectedRules = []
+        this.processors = []
+        this.selectedProcessors = []
         window.folderHandler = new FileFolders({
             collectionId:window.collectionId,
             explicitFiles:this.explicitFiles,
@@ -74,13 +74,13 @@ class ThemeFilesDeploy extends JsForm {
                 <div class="formField">
                     <label>Apply Template Transforms</label>
                     <div class="applyTransforms">
-                        ${this.rules.map(rule=>`
+                        ${this.processors.map(processor=>`
                             <div class="selector">
-                                <label for="rule-${rule.id}">
+                                <label for="processor-${processor.id}">
                                    <div class="on"><img src="/static/img/checkbox-on.png"></div>
                                     <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                                    <div>${rule.ruleName} on ${rule.filePath}</div>
-                                    <input type="checkbox" id="rule-${rule.id}" data-file-path="${rule.filePath}" name="rule" value="${rule.id}" ${this.selectedRules.includes(rule.id)?'checked':''}>
+                                    <div>${processor.processorName} on ${processor.filePath}</div>
+                                    <input type="checkbox" id="processor-${processor.id}" data-file-path="${processor.filePath}" data-label="${processor.processorName}" name="processor" value="${processor.id}" ${this.selectedProcessors.includes(processor.id)?'checked':''}>
                                 </label>
                             </div>
                         `).join("")}    
@@ -129,10 +129,10 @@ class ThemeFilesDeploy extends JsForm {
             var select = event.target;
             if (select.options[select.selectedIndex].value) {
                 this.selectedTheme = select.options[select.selectedIndex].value;
-                if (this.rules.length<1) {
-                    this.get("/rules/active").then(response=>{
+                if (this.processors.length<1) {
+                    this.get("/fileProcessors/active").then(response=>{
                         console.error(response)
-                        this.rules = response.rules;
+                        this.processors = response.processors;
                         this.render()
                     }).catch(error=>this.showError(error.message))
                 } else {
@@ -156,11 +156,11 @@ class ThemeFilesDeploy extends JsForm {
                 this.render()
              }
         )
-        this.formTarget().querySelectorAll('[name="rule"]').forEach(rule=>rule.addEventListener("change",event=>{
-            if (rule.checked) {
-                this.selectedRules.push(rule.value)
+        this.formTarget().querySelectorAll('[name="processor"]').forEach(processor=>processor.addEventListener("change",event=>{
+            if (processor.checked) {
+                this.selectedProcessors.push(processor.value)
             } else {
-                this.selectedRules = this.selectedRules.filter(selectedRule=>rule!=rule.value)
+                this.selectedProcessorsRules = this.selectedProcessors.filter(processor=>processor!=processor.value)
             }
         }))
     }
@@ -192,13 +192,14 @@ class ThemeFilesDeploy extends JsForm {
                     "theme":getSelectDetail("themes")
                 }
             });
-        Array.from(this.formTarget().querySelectorAll('[name="rule"]:checked')).forEach(input=>{
+        Array.from(this.formTarget().querySelectorAll('[name="processor"]:checked')).forEach(input=>{
             queue.push(
                 {
-                    "type":"rule",
-                    "rule":{
+                    "type":"processor",
+                    "processor":{
                         "id":input.value,
-                        "filePath":input.dataset.filePath
+                        "filePath":input.dataset.filePath,
+                        "name":input.dataset.label
                     },
                     "shop":getSelectDetail("shop"),
                     "theme":getSelectDetail("themes")
@@ -210,8 +211,6 @@ class ThemeFilesDeploy extends JsForm {
             this.showError("You must select at least one file or file transform to continue")
             return;
         }
-        console.error(queue);
-        return;
         let taskOptions = {
             queue:queue,
             id:"deploy-queue",
@@ -263,16 +262,15 @@ class DepoymentQueue extends TaskQueue {
 
     }
     taskDescription() {
-        /*
-        if (this.queue.length<1) {
-            if(!this.currentItem) {
-                return "Starting deployment..."
-            }
-            return `Deploying files to ${this.currentItem.shop.name} completed`
-        }
-            */
         if (this.currentItem) {
-            return `<div class="headline">deploying ${this.currentItem.file.name}</div> <div class="subtitle">${this.currentItem.shop.name} (${this.currentItem.theme.name})</div>`
+            switch(this.currentItem.type) {
+                case "file":
+                    return `<div class="headline">deploying ${this.currentItem.file.name}</div> <div class="subtitle">${this.currentItem.shop.name} (${this.currentItem.theme.name})</div>`
+                    break;
+                case "processor":
+                    return `<div class="headline">Applying ${this.currentItem.processor.name}</div> <div class="subtitle">${this.currentItem.shop.name} (${this.currentItem.theme.name})</div>`
+            }
+            
         }
         
 
@@ -289,15 +287,25 @@ class DepoymentQueue extends TaskQueue {
     processTask(item) {
         this.post(
             "/deploy/execute",
-            {
-                fileId:item.file.id,
-                shopId:item.shop.id,
-                themeId: item.theme.id
-            }
+            item,
         ).then(response=>{
-            
+            if (response.error) {
+                this.showError(response.error)
+            } else if (response.warning) {
+                this.showWarning(response.warning)
+            }
             this.nextTask()
-        }).catch(error=>this.showError(error.message))
+        }).catch(error=>{
+            this.target.querySelector(".progress-text").textContent = "Deployment Cancelled"
+            setTimeout(()=>{
+                this.options.owner.dispatchEvent(
+                    new CustomEvent(
+                        `${this.options.id}-complete`
+                    )
+                )
+            },1000)
+            this.showError(error.message)
+        })
     }
     
 }

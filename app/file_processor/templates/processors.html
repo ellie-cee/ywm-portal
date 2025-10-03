@@ -13,18 +13,22 @@
     form:has(.serialize) .create-only {
         display:block;
     }
-    li[data-rule-id] {
+    li[data-processor-id] {
         font-weight: bold;
         margin-left: 16px!important;
         padding:16px;
     }
+    
 </style>
-<script src="/static/js/rules.js"></script>
+<script src="/static/js/processors.js"></script>
 <div class="content-with-sidebar">
     <div class="listing">
+        <div class="title"><h3>Processors</h3></div>
         <ul class="sidebar-options">
         </ul>
-        <div><a href="/rules?action=new">New Rule</a></div>
+        <div class="buttons">
+            <button type="button" class="button" id="newProcessor">New File Processor</button>
+        </div>
     </div>
     <div class="jsapp"</div>
 </div>
@@ -32,12 +36,15 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded",event=>{        
-    {% if request.GET.ruleId %}
-        window.rulesForm = new RulesCrud({objectId:"{{request.GET.ruleId}}"})
+    {% if request.GET.processorId %}
+        window.rulesForm = new FileProcessorCrud({objectId:"{{request.GET.processorId}}"})
     {% elif  request.GET.action == "new" %}
-        window.rulesForm = new RulesCrud({})
+        window.rulesForm = new FileProcessorCrud({})
     {% endif %}
-    window.listings = new RulesListing()
+    window.listings = new FileProcessorListing()
+    document.querySelector("#newProcessor").addEventListener("click",event=>{
+        window.rulesForm = new FileProcessorCrud({})
+    })
     // const 
 });
     

@@ -485,6 +485,7 @@ ul.sidebar-menu {
 .selector {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap:8px;
   input {
     display: none;
@@ -544,5 +545,17 @@ a {
     margin: auto;
   }
 }
+.listing .title {
+  display:flex;
+  justify-content: center;
+  width:100%;
+}
 
-/* sfsfdfsd */
+
+.listing .buttons {
+  margin-top:16px;
+}
+.toaster-ui-lib-text {
+  word-break: break-word;
+}
+

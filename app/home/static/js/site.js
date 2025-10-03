@@ -222,37 +222,18 @@ class JsForm extends Esc {
             }
         )
     }
+    showToast(message,type) {
+        window.toastManager.addToast(message,type);
+        document.querySelector(".toaster-ui-lib-container").style.top="35%";
+    }
+    showWarning(message,isError=false) {
+        this.showToast(message,"warning")
+    }
     showMessage(message,isError=false) {
-        let notyf = new Notyf(
-            {
-                ripple:true,
-                duration:3000,
-                position:{x:'right',y:'center'}
-            }
-        );
-        notyf.success(message);
-        this.loaded()
+        this.showToast(message,"info")
     }
     showError(message,permanent=false) {
-
-        let notyf = null;
-        if (!permanent) {
-            notyf =  new Notyf({
-                    ripple:true,
-                    duration:5000,
-                    position:{x:'right',y:'center'}
-                }
-            );
-        } else {
-            notyf =  new Notyf(
-                {
-                    ripple:true,
-                    position:{x:'right',y:'center'}
-                }
-            );
-        }
-        notyf.error(message)
-        this.loaded()
+        this.showToast(message,"error")
     }
     
     loaded(loaded=true) {

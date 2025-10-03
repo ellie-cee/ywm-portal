@@ -4,6 +4,14 @@ from home.views import jsonResponse,getJsonPayload,logJson
 from ywm_auth.decorators import requiresLogin
 from themes.models import ThemeCollection,ThemeFile
 from shopify_app.models import ShopifySite
+from shopify_app.graphql import GqlReturn
+from file_processor.models import FileProcessor
+from jmespath import search as jpath
+
+import logging
+
+logger = logging.Logger(__name__)
+
 # Create your views here.
 
 
@@ -53,14 +61,39 @@ def shopDeploy(request,shopId):
 @requiresLogin
 def executeDeployment(request):
     payload = getJsonPayload(request)
-    shopifySite = ShopifySite.objects.get(id=payload.get("shopId"))
-    file = ThemeFile.objects.get(id=payload.get("fileId"))
-    
-    ret = shopifySite.deployFile(
-        file=file,
-        themeId=payload.get("themeId")
-    )
+    shopifySite = ShopifySite.objects.get(id=jpath("shop.id",payload))
+    themeId = jpath("theme.id",payload)
+    match payload.get("type"):
+        case "file":
+            file = ThemeFile.objects.get(id=jpath("file.id",payload))
+            ret = shopifySite.deployFile(
+                file=file,
+                themeId=jpath("theme.id",payload)
+            )
+            return jsonResponse({
+                "message":"Deployed",
+                "data":ret.data,
+                
+            })
+        case "processor":
+            processor = FileProcessor.objects.get(id=jpath("processor.id",payload))
+            ret = processor.apply(shopId=str(shopifySite.id),themeId=themeId)
+            if isinstance(ret,GqlReturn):    
+                return jsonResponse(
+                    {
+                        "message":"Successfully applied",
+                        "data":ret.data
+                    }
+                )
+            else:
+                return jsonResponse(
+                    ret,
+                    404
+                )
     return jsonResponse(
-        ret.data
+        {
+            "message":"Not found"
+        },
+        404
     )
-    
+            

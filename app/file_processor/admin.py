@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import RuleType
+from .models import ProcessorType
 
 # Register your models here.
 
-admin.site.register(RuleType)
+admin.site.register(ProcessorType)

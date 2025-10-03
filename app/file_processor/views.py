@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import RuleType,FileProcessorRule
+from .models import ProcessorType,FileProcessor
 from home.views import jsonResponse,getJsonPayload
 from django.forms.models import model_to_dict
 from home.shared import jsonify
@@ -8,27 +8,27 @@ from ywm_auth.decorators import requiresLogin
 
 # Create your views here.
 
-def getRuleTypes():
-    return [{"id":str(ruleType.id),"name":ruleType.name} for ruleType in RuleType.objects.all()]
+def getProcessorTypes():
+    return [{"id":str(ProcessorType.id),"name":ProcessorType.name} for ProcessorType in ProcessorType.objects.all()]
 
 @requiresLogin
 def getConfig(request):
     return jsonResponse(
         {   "object":{},
             "data":{
-                "ruleTypes":getRuleTypes()    
+                "processorTypes":getProcessorTypes()    
             }
         }
     )
 @requiresLogin
-def activeRules(request):
+def activeProcessors(request):
     currentPage = request.GET.get("page")
     if currentPage is None:
         currentPage = 1
-    recordCount = FileProcessorRule.objects.count()
+    recordCount = FileProcessor.objects.count()
     return jsonResponse(
         {
-            "rules":jsonify(list(FileProcessorRule.objects.all()))
+            "processors":jsonify(list(FileProcessor.objects.all()))
         }
     )
 @requiresLogin
@@ -36,22 +36,22 @@ def indexPage(request):
     
     return render(
         request,
-        "rules.html",
+        "processors.html",
         {}
     )
 @requiresLogin
-def getRule(request,ruleId):
-    rule = FileProcessorRule.objects.get(id=ruleId)
-    if rule is None:
+def getProcessor(request,processorId):
+    Processor = FileProcessor.objects.get(id=processorId)
+    if Processor is None:
         return jsonResponse(
-            {"message":"No rule exists"},
+            {"message":"No Processor exists"},
             404
         )
     return jsonResponse(
         {
-            "object":jsonify(rule),
+            "object":jsonify(Processor),
             "data":{
-                "ruleTypes":getRuleTypes()
+                "processorTypes":getProcessorTypes()
             }
         }
     )
@@ -59,36 +59,36 @@ def getRule(request,ruleId):
 def upsert(request):
     payload = getJsonPayload(request)
     
-    rule = None
+    processor = None
     if payload.get("objectId") is None:
-        rule = FileProcessorRule()
+        processor = FileProcessor()
     else:
-        rule = FileProcessorRule.objects.get(id=payload.get("objectId"))
+        processor = FileProcessor.objects.get(id=payload.get("objectId"))
     
-    rule.ruleName = payload.get("ruleName")
-    rule.ruleType = RuleType.objects.get(id=payload.get("ruleType"))
-    rule.filePath = payload.get("filePath")
-    rule.configuration = payload.get("configuration")
-    rule.save()
-    print(jsonify(rule))
+    processor.processorName = payload.get("processorName")
+    processor.processorType = ProcessorType.objects.get(id=payload.get("processorType"))
+    processor.filePath = payload.get("filePath")
+    processor.configuration = payload.get("configuration")
+    processor.save()
+    print(jsonify(processor))
     return jsonResponse(
         {
-            "objectId":str(rule.id),
-            "object":jsonify(rule)
+            "objectId":str(processor.id),
+            "object":jsonify(processor)
         },
         200
     )
-def delete(request,ruleId):
+def delete(request,processorId):
     try:
-        rule = FileProcessorRule.objects.get(id=ruleId)
-        rule.delete()
+        processor = FileProcessor.objects.get(id=processorId)
+        processor.delete()
         return jsonResponse(
-            {"message":f"Deleted rule {rule.ruleName}"},
+            {"message":f"Deleted Processor {processor.processName}"},
             200
         )
     except:
         return jsonResponse(
-            {"message":f"Invalid rule"},
+            {"message":f"Invalid Processor"},
             404
         )
     

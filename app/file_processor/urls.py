@@ -3,10 +3,10 @@ from django.urls import path
 from . import views 
 
 urlpatterns = [
-    path("rules/config",views.getConfig),
-    path("rules/active",views.activeRules),
-    path("rules/get/<str:ruleId>",views.getRule),
-    path("rules",views.indexPage),
-    path("rules/delete/<str:ruleId>",views.delete),
-    path("rules/upsert",views.upsert)
+    path("fileProcessors/config",views.getConfig),
+    path("fileProcessors/active",views.activeProcessors),
+    path("fileProcessors/get/<str:processorId>",views.getProcessor),
+    path("fileProcessors",views.indexPage),
+    path("fileProcessors/delete/<str:processorId>",views.delete),
+    path("fileProcessors/upsert",views.upsert)
 ]
