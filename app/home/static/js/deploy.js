@@ -67,11 +67,11 @@ class ThemeFilesDeploy extends JsForm {
                     </select>
                 </div>
             </div>
-            <div class="formRow requires-theme">
+            <div class="formRow requires-theme ${selectedFiles.length<1?' hidden':''}">
                 <div class="formField">
                     <label>Deploying Files</label>
                     <div class="files-to-deploy">
-                        ${filesText}
+                        ${selectedFiles.map(file=>`${file}`).join(", ")}
                     </div>
                 </div>
             </div>
