@@ -63,7 +63,7 @@ class FileProcessorCrud extends JsForm {
                 </div>
                 <div class="formField requires-id for-untested" id="themeSelector">
                     <label>Theme</label>
-                    <select name="theme" class="${this.data.themes.length<1?'hidden':''} ${this.data.selectedTheme?'':'unselected'}" required>
+                    <select name="theme" class="${this.data.themes.length<1?'hidden':''} ${this.data.selectedTheme?'':'unselected'}">
                         <option value="">Select theme</option>
                         ${this.data.themes.map(theme=>`<option value="${theme.themeId}" ${this.data.selectedTheme==theme.themeId?' selected':''}>${theme.name}</option>`).join("")}
                     </select>
