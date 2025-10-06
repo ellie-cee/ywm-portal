@@ -233,7 +233,10 @@ class JsForm extends Esc {
         this.showToast(message,"info")
     }
     showError(message,permanent=false) {
-        this.showToast(message,"error")
+        this.showToast(message,"error");
+        if (this.formTarget()) {
+            this.loaded()
+        }
     }
     
     loaded(loaded=true) {
