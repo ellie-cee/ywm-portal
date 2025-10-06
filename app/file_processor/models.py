@@ -27,36 +27,55 @@ class FileProcessor(models.Model):
     filePath = models.CharField(max_length=255)
     configuration = models.JSONField()
     applicationStrategy = models.TextChoices("ONCE","ALL")
+    tested = models.BooleanField(default=False)
     
-    def apply(self,shopId=None,themeId=None):
+    def apply(self,shopId=None,themeId=None,isTest=False):
         shopifySite = ShopifySite.objects.get(id=shopId)
         themeFile = shopifySite.getThemeFile(
             themeId=themeId,
             fileName=self.filePath,
         )
+        
         themeFileContents = None
         if themeFile is None:
-            return {"error":f"{self.filePath} does not exist in the selected theme","data":{}}
+            return {
+                "error":f"{self.filePath} does not exist in the selected theme",
+                "data":{},
+                "code":"NOTFOUND"
+            }
         slug = self.processorType.slug 
         
         if slug == "search-and-replace":
-            themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"))
+            themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"),isTest=isTest)
                 
         if themeFileContents is not None:
             if isinstance(themeFileContents,dict):
                 return {
                    "warning":f"{self.processorName} as already been applied to {self.filePath}",
+                   "code":"APPLIED",
                    "data":{}
                 }
             else:
-                ret = shopifySite.deployFile(
-                    themeId = themeId,
-                    fileName=self.filePath,
-                    fileContents=themeFileContents
-                )
+                if not isTest:
+                    ret = shopifySite.deployFile(
+                        themeId = themeId,
+                        fileName=self.filePath,
+                        fileContents=themeFileContents
+                    )
+                else:
+                    
+                    return {
+                        "objectId":self.id,
+                        "code":"SUCCESS",
+                        "data":{
+                            "original":themeFile.search("body.content"),
+                            "processed":themeFileContents
+                        }
+                    }
                 return ret
         return {
             "error":f"{self.processorName} can not be proccessed",
+            "code":"UNPROCESSABLE",
             "data":{}
         }
     def appliedSignature(self):
@@ -70,7 +89,7 @@ class FileProcessor(models.Model):
         elif extension=="liquid":
             return "{%comment%}"+f" deployment signature {str(self.id)}"+"{% endcomment %}"
                 
-    def applySearchAndReplace(self,fileContents=""):
+    def applySearchAndReplace(self,fileContents="",isTest=False):
         config:dict = self.configuration
         deploymentSignature = self.appliedSignature()
         
@@ -84,7 +103,7 @@ class FileProcessor(models.Model):
         else:
             updatedFileContents = fileContents.replace(config.get("searchFor"),config.get("replaceWith"),1)
             
-        if deploymentSignature is not None:            
+        if deploymentSignature is not None and not isTest:            
             updatedFileContents = f"{updatedFileContents}\n{deploymentSignature}"
         return updatedFileContents
 

@@ -124,6 +124,12 @@ class JsForm extends Esc {
         this.targetElement = ".jsapp";
         this.objectId = options.objectId||null;
     }
+    updateData(data) {
+        if (this.data==null) {
+            this.data = {}
+        }
+        Object.entries(data).forEach(kvp=>this.data[kvp[0]]=kvp[1])
+    }
     disappear() {
         this.target().innerHTML = ``;
     }
@@ -245,6 +251,9 @@ class JsForm extends Esc {
         } else {
             this.formTarget().classList.remove("loaded")
         }
+    }
+    loading() {
+        this.formTarget().classList.remove("loaded");
     }
     dispatchEvent(thisEventName,detail=null) {
         
@@ -388,30 +397,30 @@ class Fields {
         
         return Object.entries(dataset).map(kvp=>`data-${kvp[0]}="${kvp[1]}"`).join(" ")
     }
-    static flatSelectBox({name,values,selectedValue=null,required=false}) {
+    static flatSelectBox({name,values,selectedValue=null,required=false,serialize=false}) {
         return `
-            <select name="${name}" ${required?'required':''}>
+            <select name="${name}" ${required?'required':''} class="${serialize?'serialize':''}">
                 <option value="">Select</option>
                 ${values.map(entry=>`<option value="${entry}" ${entry.id==selectedValue?'selected':''}>${entry}</option>`).join("n")}
             </select>
         `
     }
-    static selectBox({name,values,selectedValue=null,required=false,label="name",dataset={}}) {
+    static selectBox({name,values,selectedValue=null,required=false,label="name",dataset={},serialize=false}) {
         return `
-            <select name="${name}" ${required?'required':''} ${Fields.renderDataSet(dataset)}>
+            <select name="${name}" ${required?'required':''} ${Fields.renderDataSet(dataset)} class="${serialize?'serialize':''}">
                 <option value="">Select</option>
                 ${values.map(entry=>`<option value="${entry.id}" ${entry.id==selectedValue?'selected':''}>${entry[label]}</option>`).join("n")}
             </select>
         `
     }
-    static checkbox(name,label,checked=false,radio=false,required=false,dataset={}) {
+    static checkbox({name,label,value="1",checked=false,radio=false,required=false,dataset={},serialize=false},boolean=false) {
         return `
         <div class="selector">
             <label for="checkbox-${name}">
 
                 <div class="on"><img src="/static/img/checkbox-on.png"></div>
                 <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                <input type="checkbox" name="${name}" value="${value}" class="" id="checkbox-${name}" ${fields.renderDataSet(dataset)}>
+                <input type="checkbox" name="${name}" value="${value}" class="${serialize?'serialize':''} ${boolean?'boolean-field':''}" id="checkbox-${name}" ${Fields.renderDataSet(dataset)}>
                 <div class="label">${label}</div>
             </label>
         </div>

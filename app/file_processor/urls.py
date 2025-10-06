@@ -8,5 +8,6 @@ urlpatterns = [
     path("fileProcessors/get/<str:processorId>",views.getProcessor),
     path("fileProcessors",views.indexPage),
     path("fileProcessors/delete/<str:processorId>",views.delete),
-    path("fileProcessors/upsert",views.upsert)
+    path("fileProcessors/upsert",views.upsert),
+    path("fileProcessors/test",views.testProcessor)
 ]

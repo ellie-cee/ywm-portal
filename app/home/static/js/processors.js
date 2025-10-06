@@ -1,25 +1,29 @@
 class FileProcessorCrud extends JsForm {
     constructor(options) {
         super(options)
+        
         this.objectId = options.objectId||null;
         this.object = {}
         this.data = options
         
         if (this.objectId) {
-            this.get(`fileProcessors/get/${this.objectId}`).then(response=>{
+            this.get(`/fileProcessors/get/${this.objectId}`).then(response=>{
                 this.object = response.object;
-                this.data = response.data;
+                history.replaceState(null,"",`/fileProcessors?processorId=${this.objectId}`)
+                this.updateData(response.data)
                 this.render()
                 this.loaded()
             })
         } else {
-            this.get("fileProcessors/config").then(response=>{
-                this.data = response.data;
+            this.get("/fileProcessors/config").then(response=>{
+                this.updateData(response.data)
+                
                 this.render()
                 this.loaded()
             })
         }
     }
+    
     formName() {
         return "fileProcessorForm"
     }
@@ -30,7 +34,9 @@ class FileProcessorCrud extends JsForm {
         return "Create Processor"
     }
     formContents() {
+        
         return `
+            <input type="hidden" value="${this.object.tested?1:0}" name="tested">
             <div class="formRow">
                 <div class="formField">
                     <label>Rule Name</label>
@@ -42,11 +48,27 @@ class FileProcessorCrud extends JsForm {
                 </div>
                 <div class="formField">
                     <label>Rule Type</label>
-                    ${Fields.selectBox({name:"processorType",values:this.data.processorTypes,required:true,selectedValue:this.object.processorType,dataset:{"fileProcessoret":'unselected'}})}
+                    ${Fields.selectBox({name:"processorType",values:this.data.processorTypes,required:true,selectedValue:this.object.processorType,dataset:{"fileProcessor":'unselected'}})}
                 </div>
 
             </div>
             ${this.renderConditionalFields()}
+            <div class="formRow requires-id for-untested">
+                <div class="formField">
+                    <label>Shop Name</label>
+                    <select name="shop" required id="shopSelector">
+                        <option value="">Select Shop</option>
+                        ${this.data.shops.map(shop=>`<option value="${shop.shopId}" ${shop.shopId==this.data.selectedShop?' selected':''}>${shop.name}</option>`).join("")}
+                    </select>
+                </div>
+                <div class="formField requires-id for-untested" id="themeSelector">
+                    <label>Theme</label>
+                    <select name="theme" class="${this.data.themes.length<1?'hidden':''} ${this.data.selectedTheme?'':'unselected'}" required>
+                        <option value="">Select theme</option>
+                        ${this.data.themes.map(theme=>`<option value="${theme.themeId}" ${this.data.selectedTheme==theme.themeId?' selected':''}>${theme.name}</option>`).join("")}
+                    </select>
+                </div>
+            </div>
     `
     }
     renderConditionalFields() {
@@ -68,6 +90,22 @@ class FileProcessorCrud extends JsForm {
                             <textarea name="replaceWith" class="serialize" required>${this.object.configuration?.replaceWith||''}</textArea>
                         </div>
                     </div>
+                    <div class="formRow">
+                        <div class="formField">
+                            <label>Match Case</label>
+                            ${Fields.checkbox({name:"matchCase",label:"",checked:this.object.configuration?.matchCase=="true",value:"true",serialize:true,boolean:true})}
+                        </div>
+                        <div class="formField">
+                            <label>Application Strategy</label>
+                            <select name="applicationStrategy" class="serialize">
+                                <option value="ONCE">Replace Once</option>
+                                <option value="ALL" ${this.object.congiguration?.applicationStrategy=="ALL"?'selected':''}>Replace All</option>
+                            </select>
+                
+
+                        </div>
+                    </div>
+
                 `
         }
         return ``
@@ -75,8 +113,11 @@ class FileProcessorCrud extends JsForm {
     buttons() {
         return [
             [
+                {label:`Test ${this.object.processorName}`,action:"test-processor",class:'requires-id for-untested',type:"button"},
+            ],
+            [
                 {label:`Update ${this.object.processorName}`,action:"update",class:'requires-id',type:"submit"},
-                {label:'Create Processor',action:"create",class:'create-only',type:"submit"},
+                {label:'Create Rule',action:"create",class:'create-only',type:"submit"},
                 {label:`Delete ${this.object.processorName}`,action:"delete",class:'requires-id'},
             ],
         ]
@@ -86,14 +127,73 @@ class FileProcessorCrud extends JsForm {
         this.formTarget().querySelector('select[name="processorType"]').addEventListener("change",event=>{
             let select = event.target;
             this.object.processorType = select.options[select.selectedIndex]?.value
-            select.dataset.fileProcessoret=this.processorType?"selected":"unselected"
+            select.dataset.fileProcessor=this.processorType?"selected":"unselected"
             this.render()
         })
         this.formTarget().querySelectorAll("input[required]").forEach(input=>input.addEventListener("change",event=>{
                 this.object[input.name] = input.value;
             })
         )
+        this.formTarget().querySelectorAll(".serialize").forEach(field=>field.addEventListener("change",event=>{
+            this.formTarget().querySelector('[name="tested"').value="0";
+            this.object.tested = false;
+        }))
 
+        this.formTarget().querySelector('#shopSelector').addEventListener("change",event=>{
+            this.loading()
+            let selectValue = event.target.options[event.target.selectedIndex].value;
+            this.get(`/shops/themes/${selectValue}`).then(response=>{
+                this.data.selectedShop = selectValue;
+                
+                this.data.themes = response.themeList;
+                
+                this.render()
+                this.loaded()
+            }).catch(error=>this.showError(error.message))
+        })
+        this.listenFor(
+            "test-processor",event=>{
+
+                let formData = this.serializeWithConfig()
+                this.post("/fileProcessors/test",formData).then(response=>{
+                    
+                    switch(response.code) {
+                        case "APPLIED":
+                            this.showWarning("This has already been applied to this theme. Please choose another.")
+                            break;
+                        case "NOTFOUND":
+                            this.showError("This file does not exist on the selected theme")
+                            break;
+                        case "SUCCESS":
+                            let modal = EscModal.show(`
+                                <h1> Check File Contents</h1>
+                                <form class="jsform">
+                                    <div class="formBody">
+                                        <div class="formRow">
+                                            <div class="formField">
+                                                <label>Output</label>
+                                                <textarea rows="15">${response.data.processed}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="buttons">
+                                            <button type="button" class="valid">Looks Good</button>
+                                            <button type="button" class="invalid">Edit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            `)
+                            modal.querySelector(".valid").addEventListener("click",event=>{
+                                this.formTarget().querySelector('[name="tested"]').value="1";
+                                EscModal.close()
+                                this.upsert()
+                            })
+                            modal.querySelector(".invalid").addEventListener("click",event=>{
+                                EscModal.close()
+                            })
+                    }
+                })
+            }
+        )
         this.listenFor(
             "create",
             event=>{
@@ -108,30 +208,48 @@ class FileProcessorCrud extends JsForm {
         )
         this.listenFor("delete",event=>{
             this.loaded(false)
-            this.get(`fileProcessors/delete/${this.objectId}`).then(response=>{
+            this.get(`/fileProcessors/delete/${this.objectId}`).then(response=>{
                     this.loaded()
                     this.showMessage(`Deleted ${this.object.processorName}`)
-                    location.href="fileProcessors"
+                    location.href="/fileProcessors"
                 }).catch(error=>this.showError(error.message))
             }
         )
     }
-    upsert() {
-        this.loaded(false)
+    serializeWithConfig() {
         let formData = this.serializeForm(this.formTarget())
         formData.configuration = {}
         this.formTarget().querySelectorAll(".serialize").forEach(item=>{
-            formData.configuration[item.name]=formData[item.name]
+            if (item.classList.contains("boolean-field")) {
+                
+                if (item.checked) {
+                    formData.configuration[item.name] = true
+                } else {
+                    formData.configuration[item.name] = false
+                }
+            } else {
+                formData.configuration[item.name]=formData[item.name]
+            }
+            
             delete formData[item.name]
         })
         
-        
+        return formData;
+    }
+    upsert(callback=null) {
+        this.loaded(false)
+        let formData = this.serializeWithConfig()
         this.post(
-                "fileProcessors/upsert",
+                "/fileProcessors/upsert",
                 formData
         ).then(response=>{
             this.loaded()
-            this.handleResponse(response,formData,`${formData.shopName} Updated`)
+            if (callback) {
+                callback(response);
+            } else {
+                this.handleResponse(response,formData,`${formData.shopName} Updated`)
+            }
+            
         }).catch(error=>{
             this.showError(error.message);
         })
@@ -140,7 +258,8 @@ class FileProcessorCrud extends JsForm {
     handleResponse(response,formData) {
         this.object = response.object
         this.objectId = response.objectId
-        history.replaceState(null, "", `fileProcessors?processorId=${this.objectId}`);
+        history.replaceState(null, "", `/fileProcessors?processorId=${this.objectId}`);
+        this.showMessage("updated successfully")
         this.render()
         document.dispatchEvent(
             new CustomEvent(
@@ -160,8 +279,7 @@ class FileProcessorListing {
         this.loadfileProcessor()
     }
     loadfileProcessor() {
-        fetch("fileProcessors/active").then(response=>response.json()).then(response=>{
-            
+        fetch("/fileProcessors/active").then(response=>response.json()).then(response=>{
             document.querySelector(".sidebar-options").innerHTML = response.processors.map(processor=>`
                 <li data-processor-id="${processor.id}"  data-clickable>${processor.processorName}</li>
             `).join("")

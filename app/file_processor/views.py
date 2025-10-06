@@ -4,6 +4,7 @@ from home.views import jsonResponse,getJsonPayload
 from django.forms.models import model_to_dict
 from home.shared import jsonify
 from ywm_auth.decorators import requiresLogin
+from deployments.views import shopList
 
 
 # Create your views here.
@@ -16,7 +17,10 @@ def getConfig(request):
     return jsonResponse(
         {   "object":{},
             "data":{
-                "processorTypes":getProcessorTypes()    
+                "processorTypes":getProcessorTypes(),
+                "shops":shopList(),
+                "themes":[]
+                
             }
         }
     )
@@ -27,7 +31,7 @@ def activeProcessors(request):
         currentPage = 1
     recordCount = FileProcessor.objects.count()
     return jsonResponse(
-        {
+        {   
             "processors":jsonify(list(FileProcessor.objects.all()))
         }
     )
@@ -51,7 +55,10 @@ def getProcessor(request,processorId):
         {
             "object":jsonify(Processor),
             "data":{
-                "processorTypes":getProcessorTypes()
+                "processorTypes":getProcessorTypes(),
+                "shops":shopList(),
+                "themes":[]
+                
             }
         }
     )
@@ -64,13 +71,13 @@ def upsert(request):
         processor = FileProcessor()
     else:
         processor = FileProcessor.objects.get(id=payload.get("objectId"))
-    
+    print(payload)
     processor.processorName = payload.get("processorName")
     processor.processorType = ProcessorType.objects.get(id=payload.get("processorType"))
     processor.filePath = payload.get("filePath")
     processor.configuration = payload.get("configuration")
+    processor.tested = payload.get("tested")
     processor.save()
-    print(jsonify(processor))
     return jsonResponse(
         {
             "objectId":str(processor.id),
@@ -91,7 +98,22 @@ def delete(request,processorId):
             {"message":f"Invalid Processor"},
             404
         )
+        
+@requiresLogin
+def testProcessor(request):
+    payload = getJsonPayload(request)
     
+    processor = FileProcessor.objects.get(id=payload.get("objectId"))
+    processor.configuration = payload.get("configuration")
+    ret = processor.apply(
+        shopId=payload.get("shop"),
+        themeId=payload.get("theme"),
+        isTest=True
+    )
+    return jsonResponse(
+        jsonify(ret),
+        200
+    )
     
     
     

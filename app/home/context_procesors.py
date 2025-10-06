@@ -8,7 +8,5 @@ def sidebarNav(request):
     ret =  {
         "sidebarNav":SiteNav.objects.order_by("displayOrder").all()
     }
-    
-    
     return ret
     

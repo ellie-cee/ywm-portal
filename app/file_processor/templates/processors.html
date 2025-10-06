@@ -18,7 +18,15 @@
         margin-left: 16px!important;
         padding:16px;
     }
-    
+    .for-untested {
+        display: none!important;
+    }
+    form:has([name="tested"][value="0"]) .for-untested {
+        display:flex!important;
+    }
+    form:has([name="tested"][value="0"]) button.for-untested {
+        display:block!important;
+    }
 </style>
 <script src="/static/js/processors.js"></script>
 <div class="content-with-sidebar">

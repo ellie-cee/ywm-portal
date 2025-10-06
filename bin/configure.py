@@ -152,7 +152,7 @@ open(
 ).write(
     f""" 
     DROP DATABASE IF EXISTS `{config.get('DB_NAME')}`;
-    CREATE DATABASE `{config.get('DB_NAME')}`; 
+    CREATE DATABASE `{config.get('DB_NAME')}`  DEFAULT CHARSET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;; 
     DROP USER IF EXISTS `{config.get('DB_USER')}`@`localhost`;
     create user `{config.get('DB_USER')}`@`localhost` IDENTIFIED BY '{config.get('DB_PASSWORD')}';
     GRANT ALL PRIVILEGES on {config.get('DB_NAME')}.* to `{config.get('DB_USER')}`@`localhost`;
