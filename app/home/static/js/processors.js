@@ -56,7 +56,7 @@ class FileProcessorCrud extends JsForm {
             <div class="formRow requires-id for-untested">
                 <div class="formField">
                     <label>Shop Name</label>
-                    <select name="shop" required id="shopSelector">
+                    <select name="shop" id="shopSelector">
                         <option value="">Select Shop</option>
                         ${this.data.shops.map(shop=>`<option value="${shop.shopId}" ${shop.shopId==this.data.selectedShop?' selected':''}>${shop.name}</option>`).join("")}
                     </select>
