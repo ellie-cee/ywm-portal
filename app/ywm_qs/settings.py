@@ -96,6 +96,8 @@ DATABASES = {
         "PASSWORD":os.getenv("DB_PASSWORD"),
         "OPTIONS": {
             "read_default_file": "/path/to/my.cnf",
+            'charset': 'utf8mb4',
+            'collation': 'utf8mb4_unicode_ci',
         },
     }
 }
