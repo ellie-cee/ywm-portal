@@ -83,11 +83,11 @@ class FileProcessorCrud extends JsForm {
                     <div class="formRow">
                         <div class="formField">
                             <label>Search For</label>
-                            <textarea name="searchFor" class="serialize" required>${this.object.configuration?.searchFor||''}</textarea>
+                            <textarea name="searchFor" class="serialize">${this.object.configuration?.searchFor||''}</textarea>
                         </div>
                         <div class="formField">
                             <label>Replace With</label>
-                            <textarea name="replaceWith" class="serialize" required>${this.object.configuration?.replaceWith||''}</textArea>
+                            <textarea name="replaceWith" class="serialize">${this.object.configuration?.replaceWith||''}</textArea>
                         </div>
                     </div>
                     <div class="formRow">
@@ -155,6 +155,9 @@ class FileProcessorCrud extends JsForm {
             "test-processor",event=>{
 
                 let formData = this.serializeWithConfig()
+                if (formData.shop=="" || formData.theme=="") {
+                    this.showError("Please select Shop & Theme to continue")
+                }
                 this.post("/fileProcessors/test",formData).then(response=>{
                     
                     switch(response.code) {
