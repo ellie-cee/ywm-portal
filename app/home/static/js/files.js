@@ -11,7 +11,7 @@ class ThemeFileEditor extends JsForm {
             this.get(`/files/load/${this.objectId}`).then(payload=>{
                 switch(payload.status) {
                     case 200:
-                        history.replaceState(null, "", `/files?fileId=${this.fileId}`);
+                        history.replaceState(null, "", `/files?fileId=${this.objectId}`);
                         this.fileDetails = payload
                         this.collectionId = payload.collection;
                         //if (!document.querySelector("#fileFolder")) {
