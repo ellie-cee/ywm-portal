@@ -420,7 +420,7 @@ class Fields {
 
                 <div class="on"><img src="/static/img/checkbox-on.png"></div>
                 <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                <input type="checkbox" name="${name}" value="${value}" class="${serialize?'serialize':''} ${boolean?'boolean-field':''}" id="checkbox-${name}" ${Fields.renderDataSet(dataset)}>
+                <input type="checkbox" name="${name}" value="${value}" class="${serialize?'serialize':''} ${boolean?'boolean-field':''}" id="checkbox-${name}" ${Fields.renderDataSet(dataset)} ${checked?' checked':''}>
                 <div class="label">${label}</div>
             </label>
         </div>

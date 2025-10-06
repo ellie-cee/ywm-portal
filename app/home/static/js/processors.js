@@ -77,7 +77,9 @@ class FileProcessorCrud extends JsForm {
             let typeSelect = this.formTarget()?.querySelector('[name="processorType"]')
             typeSelectValue = typeSelect?.options[typeSelect.selectedIndex]?.textContent
         }
+        console.error(this.object)
         switch(typeSelectValue) {
+            
             case "Search and Replace":
                 return `
                     <div class="formRow">
@@ -99,7 +101,7 @@ class FileProcessorCrud extends JsForm {
                             <label>Application Strategy</label>
                             <select name="applicationStrategy" class="serialize">
                                 <option value="ONCE">Replace Once</option>
-                                <option value="ALL" ${this.object.congiguration?.applicationStrategy=="ALL"?'selected':''}>Replace All</option>
+                                <option value="ALL" ${this.object.configuration?.applicationStrategy=="ALL"?'selected':''}>Replace All</option>
                             </select>
                 
 
@@ -136,7 +138,9 @@ class FileProcessorCrud extends JsForm {
         )
         this.formTarget().querySelectorAll(".serialize").forEach(field=>field.addEventListener("change",event=>{
             this.formTarget().querySelector('[name="tested"').value="0";
+            this.object.configuration[field.name] = field.value;
             this.object.tested = false;
+            console.error(this.object)
         }))
 
         this.formTarget().querySelector('#shopSelector').addEventListener("change",event=>{
@@ -242,6 +246,7 @@ class FileProcessorCrud extends JsForm {
     upsert(callback=null) {
         this.loaded(false)
         let formData = this.serializeWithConfig()
+        console.error(formData)
         this.post(
                 "/fileProcessors/upsert",
                 formData
