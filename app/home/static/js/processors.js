@@ -34,7 +34,7 @@ class FileProcessorCrud extends JsForm {
         return "Create Processor"
     }
     formContents() {
-        
+        console.error(this.object.tested)
         return `
             <input type="hidden" value="${this.object.tested?1:0}" name="tested">
             <div class="formRow">
@@ -53,7 +53,7 @@ class FileProcessorCrud extends JsForm {
 
             </div>
             ${this.renderConditionalFields()}
-            <div class="formRow requires-id for-untested">
+            <div class="formRow ${this.object.tested?'tested':''} requires-id">
                 <div class="formField">
                     <label>Shop Name</label>
                     <select name="shop" id="shopSelector">
@@ -61,7 +61,7 @@ class FileProcessorCrud extends JsForm {
                         ${this.data.shops.map(shop=>`<option value="${shop.shopId}" ${shop.shopId==this.data.selectedShop?' selected':''}>${shop.name}</option>`).join("")}
                     </select>
                 </div>
-                <div class="formField requires-id for-untested" id="themeSelector">
+                <div class="formField" id="themeSelector">
                     <label>Theme</label>
                     <select name="theme" class="${this.data.themes.length<1?'hidden':''} ${this.data.selectedTheme?'':'unselected'}">
                         <option value="">Select theme</option>
@@ -115,7 +115,7 @@ class FileProcessorCrud extends JsForm {
     buttons() {
         return [
             [
-                {label:`Test ${this.object.processorName}`,action:"test-processor",class:'requires-id for-untested',type:"button"},
+                {label:`Test ${this.object.processorName}`,action:"test-processor",class:`requires-id ${this.object.tested?'tested':''}`,type:"button"},
             ],
             [
                 {label:`Update ${this.object.processorName}`,action:"update",class:'requires-id',type:"submit"},
@@ -132,6 +132,12 @@ class FileProcessorCrud extends JsForm {
             select.dataset.fileProcessor=this.processorType?"selected":"unselected"
             this.render()
         })
+        this.formTarget().querySelector('select[name="theme"]').addEventListener("change",event=>{
+            let select = event.target;
+            this.data.selectedTheme = select.options[select.selectedIndex]?.value
+             
+            this.render()
+        })
         this.formTarget().querySelectorAll("input[required]").forEach(input=>input.addEventListener("change",event=>{
                 this.object[input.name] = input.value;
             })
@@ -140,6 +146,7 @@ class FileProcessorCrud extends JsForm {
             this.formTarget().querySelector('[name="tested"').value="0";
             this.object.configuration[field.name] = field.value;
             this.object.tested = false;
+            this.render()
             console.error(this.object)
         }))
 
@@ -160,44 +167,50 @@ class FileProcessorCrud extends JsForm {
 
                 let formData = this.serializeWithConfig()
                 if (formData.shop=="" || formData.theme=="") {
-                    this.showError("Please select Shop & Theme to continue")
+                    this.showWarning("Please select Shop & Theme to continue")
                 }
-                this.post("/fileProcessors/test",formData).then(response=>{
-                    
-                    switch(response.code) {
-                        case "APPLIED":
-                            this.showWarning("This has already been applied to this theme. Please choose another.")
-                            break;
-                        case "NOTFOUND":
-                            this.showError("This file does not exist on the selected theme")
-                            break;
-                        case "SUCCESS":
-                            let modal = EscModal.show(`
-                                <h1> Check File Contents</h1>
-                                <form class="jsform">
-                                    <div class="formBody">
-                                        <div class="formRow">
-                                            <div class="formField">
-                                                <label>Output</label>
-                                                <textarea rows="15">${response.data.processed}</textarea>
+                this.upsert(response=>{
+                    this.object = response.object
+                    this.objectId = response.objectId  
+                    this.post("/fileProcessors/test",formData).then(response=>{
+                        
+                        switch(response.code) {
+                            case "APPLIED":
+                                this.showWarning("This has already been applied to this theme. Please choose another.")
+                                break;
+                            case "NOTFOUND":
+                                this.showError("This file does not exist on the selected theme")
+                                break;
+                            case "SUCCESS":
+                                let modal = EscModal.show(`
+                                    <h1> Check File Contents</h1>
+                                    <form class="jsform">
+                                        <div class="formBody">
+                                            <div class="formRow">
+                                                <div class="formField">
+                                                    <label>Output</label>
+                                                    <textarea rows="15">${response.data.processed}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="buttons">
+                                                <button type="button" class="valid">Looks Good</button>
+                                                <button type="button" class="invalid">Edit</button>
                                             </div>
                                         </div>
-                                        <div class="buttons">
-                                            <button type="button" class="valid">Looks Good</button>
-                                            <button type="button" class="invalid">Edit</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            `)
-                            modal.querySelector(".valid").addEventListener("click",event=>{
-                                this.formTarget().querySelector('[name="tested"]').value="1";
-                                EscModal.close()
-                                this.upsert()
-                            })
-                            modal.querySelector(".invalid").addEventListener("click",event=>{
-                                EscModal.close()
-                            })
-                    }
+                                    </form>
+                                `)
+                                modal.querySelector(".valid").addEventListener("click",event=>{
+                                    this.formTarget().querySelector('[name="tested"]').value="1";
+                                    EscModal.close()
+                                    this.upsert()
+                                })
+                                modal.querySelector(".invalid").addEventListener("click",event=>{
+                                    this.object.tested=false;
+                                    EscModal.close()
+                                    this.render()
+                                })
+                        }
+                    })
                 })
             }
         )

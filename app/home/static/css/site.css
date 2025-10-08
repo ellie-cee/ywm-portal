@@ -131,6 +131,7 @@ form.jsform {
   display: flex;
   flex-direction: column;
   
+  
   .formrow {
     display: flex;
     gap: 16px;
@@ -184,10 +185,9 @@ form.jsform {
         button[data-action="delete"] {
           background-color: #900;
         }
-        button.requires-id {
-          display: none;
-        }
+        
     }
+    
   }
   .formHeader {
     font-size:24px;
@@ -215,6 +215,9 @@ form.jsform.loaded {
   .form-loading {
     display: none;
   }
+}
+form.jsform .requires-id {
+  display: none;
 }
 form.jsform.track-progress {
   .form-progress {
@@ -267,8 +270,14 @@ form.jsform.track-progress {
 }
 
 form.jsform:has(input[name="objectId"]) {
+  .requires-id {
+      display: block;
+  }
+  .formRow.requires-id {
+      display:flex;
+  }
   .buttons {
-    button.requires-id {
+    .requires-id {
       display: block;
     }
     button.create-only {

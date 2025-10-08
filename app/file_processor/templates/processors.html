@@ -22,10 +22,13 @@
         display: none!important;
     }
     form:has([name="tested"][value="0"]) .for-untested {
-        display:flex!important;
+        display:flex;
     }
     form:has([name="tested"][value="0"]) button.for-untested {
-        display:block!important;
+        display:block;
+    }
+    .tested {
+        display: none!important;
     }
 </style>
 <script src="/static/js/processors.js"></script>

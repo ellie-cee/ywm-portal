@@ -1,3 +1,4 @@
+import re
 import uuid
 from django.db import models
 from shopify_app.graphql import GraphQL,GraphQlIterable
@@ -98,10 +99,16 @@ class FileProcessor(models.Model):
                 "error":f"{self.processorName} as already been applied to {self.filePath}"
             }
         updatedFileContents = None
+        fileReg = pattern = re.compile(re.sub(r'\s*?[*]\s*',".*?",config.get("searchFor")).replace("\n",""),flags=re.DOTALL)
+        
+        
         if config.get("applicationStrategy")=="ALL":
-            updatedFileContents =  fileContents.replace(config.get("searchFor"),config.get("replaceWith"))
+            updatedFileContents = fileReg.sub(config.get("replaceWith"),fileContents)
+            #updatedFileContents =  fileContents.replace(config.get("searchFor"),config.get("replaceWith"))
         else:
-            updatedFileContents = fileContents.replace(config.get("searchFor"),config.get("replaceWith"),1)
+            updatedFileContents = fileReg.sub(config.get("replaceWith"),fileContents,count=1)
+            #updatedFileContents = re.sub(config.get("searchFor"),config.get("replaceWith"),fileContents,count=1)
+            #updatedFileContents = fileContents.replace(config.get("searchFor"),config.get("replaceWith"),1)
             
         if deploymentSignature is not None and not isTest:            
             updatedFileContents = f"{updatedFileContents}\n{deploymentSignature}"
