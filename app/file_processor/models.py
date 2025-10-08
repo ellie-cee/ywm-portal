@@ -50,7 +50,6 @@ class FileProcessor(models.Model):
             themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"),isTest=isTest)
                 
         if themeFileContents is not None:
-            print(themeFileContents)
             if isinstance(themeFileContents,dict):
                 return {
                    "warning":f"{self.processorName} as already been applied to {self.filePath}",
@@ -100,7 +99,7 @@ class FileProcessor(models.Model):
                 "error":f"{self.processorName} as already been applied to {self.filePath}"
             }
         updatedFileContents = None
-        reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
+        reString = re.sub(r'(%\}|\}\}|>)(?:\s+|\s*[*]\s*)(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
         print(reString)
         #reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
         pattern = re.compile(reString,flags=re.DOTALL)
