@@ -99,8 +99,10 @@ class FileProcessor(models.Model):
                 "error":f"{self.processorName} as already been applied to {self.filePath}"
             }
         updatedFileContents = None
-        fileReg = pattern = re.compile(re.sub(r'\s*?[*]\s*',".*?",config.get("searchFor")).replace("\n",""),flags=re.DOTALL)
-        
+        fileReg = pattern = re.compile(
+            re.sub(r'\s*?[*]\s*',".*",rf'{config.get("searchFor").strip().replace("\n","").replace("|","\\|")}'),
+            flags=re.DOTALL
+        )
         
         if config.get("applicationStrategy")=="ALL":
             updatedFileContents = fileReg.sub(config.get("replaceWith"),fileContents)
