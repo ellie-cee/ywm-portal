@@ -71,6 +71,10 @@ class FileProcessorCrud extends JsForm {
             </div>
     `
     }
+    escapedTextareaText(textValue="") {
+        return textValue.replaceAll(/&(\w+);/g,"&amp;$1;")
+
+    }
     renderConditionalFields() {
         let typeSelectValue = this.data.processorTypes?.find(processor=>processor.id==this.object.processorType)?.name
         if (!typeSelectValue) {
@@ -85,11 +89,11 @@ class FileProcessorCrud extends JsForm {
                     <div class="formRow">
                         <div class="formField">
                             <label>Search For</label>
-                            <textarea name="searchFor" class="serialize" rows="10">${this.object.configuration?.searchFor||''}</textarea>
+                            <textarea name="searchFor" class="serialize" rows="10" autocorrect="off" spellcheck="false">${this.escapedTextareaText(this.object.configuration?.searchFor)}</textarea>
                         </div>
                         <div class="formField">
                             <label>Replace With</label>
-                            <textarea name="replaceWith" class="serialize" rows="10">${this.object.configuration?.replaceWith||''}</textArea>
+                            <textarea name="replaceWith" class="serialize" rows="10" autocorrect="off" spellcheck="false">${this.escapedTextareaText(this.object.configuration?.replaceWith)}</textArea>
                         </div>
                     </div>
                     <div class="formRow">
@@ -162,6 +166,15 @@ class FileProcessorCrud extends JsForm {
                 this.loaded()
             }).catch(error=>this.showError(error.message))
         })
+        this.formTarget().querySelectorAll("textarea").forEach(textarea=>textarea.addEventListener(
+            "paste",
+            event=>{
+                event.preventDefault();
+                let text = (event.clipboardData || window.clipboardData).getData("text");
+                textarea.textContent = text;
+
+            }
+        ))
         this.listenFor(
             "test-processor",event=>{
 

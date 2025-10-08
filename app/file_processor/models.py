@@ -50,6 +50,7 @@ class FileProcessor(models.Model):
             themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"),isTest=isTest)
                 
         if themeFileContents is not None:
+            print(themeFileContents)
             if isinstance(themeFileContents,dict):
                 return {
                    "warning":f"{self.processorName} as already been applied to {self.filePath}",
@@ -99,18 +100,12 @@ class FileProcessor(models.Model):
                 "error":f"{self.processorName} as already been applied to {self.filePath}"
             }
         updatedFileContents = None
-        fileReg = pattern = re.compile(
-            re.sub(r'\s*?[*]\s*',".*?",config.get("searchFor").strip().replace("\n","").replace("|","\\|")),
-            flags=re.DOTALL
-        )
-        
-        if config.get("applicationStrategy")=="ALL":
-            updatedFileContents = fileReg.sub(config.get("replaceWith"),fileContents)
-            #updatedFileContents =  fileContents.replace(config.get("searchFor"),config.get("replaceWith"))
-        else:
-            updatedFileContents = fileReg.sub(config.get("replaceWith"),fileContents,count=1)
-            #updatedFileContents = re.sub(config.get("searchFor"),config.get("replaceWith"),fileContents,count=1)
-            #updatedFileContents = fileContents.replace(config.get("searchFor"),config.get("replaceWith"),1)
+        reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
+        print(reString)
+        #reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
+        pattern = re.compile(reString,flags=re.DOTALL)
+      
+        updatedFileContents = pattern.sub(config.get("replaceWith"),fileContents)
             
         if deploymentSignature is not None and not isTest:            
             updatedFileContents = f"{updatedFileContents}\n{deploymentSignature}"
