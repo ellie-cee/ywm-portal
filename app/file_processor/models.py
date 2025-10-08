@@ -100,8 +100,6 @@ class FileProcessor(models.Model):
             }
         updatedFileContents = None
         reString = re.sub(r'(%\}|\}\}|>)(?:\s+|\s*[*]\s*)(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
-        print(reString)
-        #reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
         pattern = re.compile(reString,flags=re.DOTALL)
       
         updatedFileContents = pattern.sub(config.get("replaceWith"),fileContents)
