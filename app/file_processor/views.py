@@ -71,6 +71,7 @@ def upsert(request):
         processor = FileProcessor()
     else:
         processor = FileProcessor.objects.get(id=payload.get("objectId"))
+        
     processor.processorName = payload.get("processorName")
     processor.processorType = ProcessorType.objects.get(id=payload.get("processorType"))
     processor.filePath = payload.get("filePath")

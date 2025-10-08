@@ -100,7 +100,7 @@ class FileProcessor(models.Model):
             }
         updatedFileContents = None
         fileReg = pattern = re.compile(
-            re.sub(r'\s*?[*]\s*',".*",config.get("searchFor").strip().replace("\n","").replace("|","\\|")),
+            re.sub(r'\s*?[*]\s*',".*?",config.get("searchFor").strip().replace("\n","").replace("|","\\|")),
             flags=re.DOTALL
         )
         
