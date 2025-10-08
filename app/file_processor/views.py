@@ -76,7 +76,7 @@ def upsert(request):
     processor.processorType = ProcessorType.objects.get(id=payload.get("processorType"))
     processor.filePath = payload.get("filePath")
     processor.configuration = payload.get("configuration")
-    processor.tested = payload.get("tested")
+    processor.tested = True if payload.get("tested")=="1" else False
     processor.save()
     return jsonResponse(
         {

@@ -53,7 +53,7 @@ class FileProcessorCrud extends JsForm {
 
             </div>
             ${this.renderConditionalFields()}
-            <div class="formRow ${this.object.tested?'tested':''} requires-id">
+            <div class="formRow ${this.object.tested=="1"?'tested':''} requires-id">
                 <div class="formField">
                     <label>Shop Name</label>
                     <select name="shop" id="shopSelector">
@@ -290,8 +290,8 @@ class FileProcessorCrud extends JsForm {
     }
 
     handleResponse(response,formData) {
-        this.object = response.object
-        this.objectId = response.objectId
+        this.object = response.object;
+        this.objectId = response.objectId;
         history.replaceState(null, "", `/fileProcessors?processorId=${this.objectId}`);
         this.showMessage("updated successfully")
         this.render()
