@@ -181,6 +181,7 @@ class FileProcessorCrud extends JsForm {
                 let formData = this.serializeWithConfig()
                 if (formData.shop=="" || formData.theme=="") {
                     this.showWarning("Please select Shop & Theme to continue")
+                    return;
                 }
                 this.upsert(response=>{
                     this.object = response.object
