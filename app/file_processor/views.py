@@ -122,7 +122,6 @@ def testProcessor(request):
 @requiresLogin
 def execute(request):
     payload = getJsonPayload(request)
-    print(json.dumps(payload,indent=1))
     try:
         processor = FileProcessor.objects.get(id=payload.get("objectId"))
         
