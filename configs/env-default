@@ -9,3 +9,4 @@ DEFAULT_EMAIL=
 MAIL_DOMAIN=
 API_VERSION=2025-07
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+FIELD_ENCRYPTION_KEY=

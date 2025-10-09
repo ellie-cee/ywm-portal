@@ -47,8 +47,9 @@ class FileProcessor(models.Model):
         slug = self.processorType.slug 
         
         if slug == "search-and-replace":
-            themeFileContents = self.applySearchAndReplace(themeFile.search("body.content"),isTest=isTest)
-                
+            originalFileContents = themeFile.search("body.content")
+            themeFileContents = self.applySearchAndReplace(originalFileContents,isTest=isTest)
+        
         if themeFileContents is not None:
             if isinstance(themeFileContents,dict):
                 return {
@@ -57,23 +58,28 @@ class FileProcessor(models.Model):
                    "data":{}
                 }
             else:
+                if self.configuration.get("replaceWith") not in themeFileContents:
+                    return {
+                    "warning":f"{self.processorName} did not change file. Please check search parameters",
+                    "code":"APPLIED",
+                    "data":{}
+                    }
                 if not isTest:
                     ret = shopifySite.deployFile(
                         themeId = themeId,
                         fileName=self.filePath,
                         fileContents=themeFileContents
                     )
-                else:
+                
                     
-                    return {
-                        "objectId":self.id,
-                        "code":"SUCCESS",
-                        "data":{
-                            "original":themeFile.search("body.content"),
-                            "processed":themeFileContents
-                        }
+                return {
+                    "objectId":self.id,
+                    "code":"SUCCESS",
+                    "data":{
+                        "original":themeFile.search("body.content"),
+                        "processed":themeFileContents
                     }
-                return ret
+                }
         return {
             "error":f"{self.processorName} can not be proccessed",
             "code":"UNPROCESSABLE",
@@ -82,13 +88,13 @@ class FileProcessor(models.Model):
     def appliedSignature(self):
         extension = self.filePath.split(".")[-1].lower()
         if extension=="js":
-            return f"/* deployment signature {str(self.id)} */"
+            return f"/*ds{str(self.id)}*/"
         elif extension=="css":
-            return f"/* deployment signature {str(self.id)} */"
+            return f"/*ds {str(self.id)}*/"
         elif extension=="html":
-            return f"<!-- deployment signature {str(self.id)} -->"
+            return f"<!--ds {str(self.id)}-->"
         elif extension=="liquid":
-            return "{%comment%}"+f" deployment signature {str(self.id)}"+"{% endcomment %}"
+            return "{%comment%}"+f"ds {str(self.id)}"+"{% endcomment %}"
                 
     def applySearchAndReplace(self,fileContents="",isTest=False):
         config:dict = self.configuration
@@ -100,8 +106,6 @@ class FileProcessor(models.Model):
             }
         updatedFileContents = None
         reString = re.sub(r'(%\}|\}\}|>)(?:\s+|\s*[*]\s*)(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
-        print(reString)
-        #reString = re.sub(r'(%\}|\}\}|>)\s+(\{%|\{\{|<)',r'\1.*?\2',config.get("searchFor").strip().replace("|",r"\|").replace(r".",r"\."))
         pattern = re.compile(reString,flags=re.DOTALL)
       
         updatedFileContents = pattern.sub(config.get("replaceWith"),fileContents)
