@@ -1,6 +1,7 @@
 import json
 from django.shortcuts import render
 from home.views import jsonResponse,getJsonPayload,logJson
+from home.shared import jsonify
 from ywm_auth.decorators import requiresLogin
 from themes.models import ThemeCollection,ThemeFile
 from shopify_app.models import ShopifySite
@@ -71,6 +72,7 @@ def executeDeployment(request):
             file=file,
             themeId=jpath("theme.id",payload)
         )
+        
         return jsonResponse({
             "message":"Deployed",
             "data":ret.data,
@@ -78,23 +80,7 @@ def executeDeployment(request):
         })
     elif type ==  "processor":
         processor = FileProcessor.objects.get(id=jpath("processor.id",payload))
-        ret = processor.apply(shopId=str(shopifySite.id),themeId=themeId)
-        if isinstance(ret,GqlReturn):    
-            return jsonResponse(
-                {
-                    "message":"Successfully applied",
-                    "data":ret.data
-                }
-            )
-        else:
-            return jsonResponse(
-                ret,
-                404
-            )
-    return jsonResponse(
-        {
-            "message":"Not found"
-        },
-        404
-    )
+        return jsonResponse(jsonify(processor.apply(shopId=str(shopifySite.id),themeId=themeId)))
+        
+    
             

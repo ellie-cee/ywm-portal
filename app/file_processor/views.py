@@ -1,3 +1,5 @@
+import json
+import traceback
 from django.shortcuts import render
 from .models import ProcessorType,FileProcessor
 from home.views import jsonResponse,getJsonPayload
@@ -5,6 +7,8 @@ from django.forms.models import model_to_dict
 from home.shared import jsonify
 from ywm_auth.decorators import requiresLogin
 from deployments.views import shopList
+from jmespath import search as jpath
+from shopify_app.graphql import GqlReturn
 
 
 # Create your views here.
@@ -98,7 +102,7 @@ def delete(request,processorId):
             {"message":f"Invalid Processor"},
             404
         )
-        
+
 @requiresLogin
 def testProcessor(request):
     payload = getJsonPayload(request)
@@ -115,5 +119,20 @@ def testProcessor(request):
         200
     )
     
+@requiresLogin
+def execute(request):
+    payload = getJsonPayload(request)
+    print(json.dumps(payload,indent=1))
+    try:
+        processor = FileProcessor.objects.get(id=payload.get("objectId"))
+        
+        return jsonResponse(jsonify(processor.apply(shopId=payload.get("shop"),themeId=payload.get("theme"))))
+    except:
+        traceback.print_exc()
+        return jsonResponse({
+            "error":f"{processor.processorName} can not be proccessed",
+            "code":"UNPROCESSABLE",
+            "data":{}
+        })
     
     

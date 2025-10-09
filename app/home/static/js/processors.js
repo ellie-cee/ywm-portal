@@ -34,7 +34,7 @@ class FileProcessorCrud extends JsForm {
         return "Create Processor"
     }
     formContents() {
-        console.error(this.object.tested)
+        
         return `
             <input type="hidden" value="${this.object.tested?1:0}" name="tested">
             <div class="formRow">
@@ -53,7 +53,7 @@ class FileProcessorCrud extends JsForm {
 
             </div>
             ${this.renderConditionalFields()}
-            <div class="formRow ${this.object.tested=="1"?'tested':''} requires-id">
+            <div class="formRow requires-id">
                 <div class="formField">
                     <label>Shop Name</label>
                     <select name="shop" id="shopSelector">
@@ -81,7 +81,6 @@ class FileProcessorCrud extends JsForm {
             let typeSelect = this.formTarget()?.querySelector('[name="processorType"]')
             typeSelectValue = typeSelect?.options[typeSelect.selectedIndex]?.textContent
         }
-        console.error(this.object)
         switch(typeSelectValue) {
             
             case "Search and Replace":
@@ -120,6 +119,7 @@ class FileProcessorCrud extends JsForm {
         return [
             [
                 {label:`Test ${this.object.processorName}`,action:"test-processor",class:`requires-id ${this.object.tested?'tested':''}`,type:"button"},
+                {label:`Run ${this.object.processorName}`,action:"run-processor",class:`requires-id`,type:"button"},
             ],
             [
                 {label:`Update ${this.object.processorName}`,action:"update",class:'requires-id',type:"submit"},
@@ -151,7 +151,7 @@ class FileProcessorCrud extends JsForm {
             this.object.configuration[field.name] = field.value;
             this.object.tested = false;
             this.render()
-            console.error(this.object)
+            
         }))
 
         this.formTarget().querySelector('#shopSelector').addEventListener("change",event=>{
@@ -177,55 +177,12 @@ class FileProcessorCrud extends JsForm {
         ))
         this.listenFor(
             "test-processor",event=>{
-
-                let formData = this.serializeWithConfig()
-                if (formData.shop=="" || formData.theme=="") {
-                    this.showWarning("Please select Shop & Theme to continue")
-                    return;
-                }
-                this.upsert(response=>{
-                    this.object = response.object
-                    this.objectId = response.objectId  
-                    this.post("/fileProcessors/test",formData).then(response=>{
-                        
-                        switch(response.code) {
-                            case "APPLIED":
-                                this.showWarning("This has already been applied to this theme. Please choose another.")
-                                break;
-                            case "NOTFOUND":
-                                this.showError("This file does not exist on the selected theme")
-                                break;
-                            case "SUCCESS":
-                                let modal = EscModal.show(`
-                                    <h1> Check File Contents</h1>
-                                    <form class="jsform">
-                                        <div class="formBody">
-                                            <div class="formRow">
-                                                <div class="formField">
-                                                    <label>Output</label>
-                                                    <textarea rows="15">${response.data.processed}</textarea>
-                                                </div>
-                                            </div>
-                                            <div class="buttons">
-                                                <button type="button" class="valid">Looks Good</button>
-                                                <button type="button" class="invalid">Edit</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                `)
-                                modal.querySelector(".valid").addEventListener("click",event=>{
-                                    this.formTarget().querySelector('[name="tested"]').value="1";
-                                    EscModal.close()
-                                    this.upsert()
-                                })
-                                modal.querySelector(".invalid").addEventListener("click",event=>{
-                                    this.object.tested=false;
-                                    EscModal.close()
-                                    this.render()
-                                })
-                        }
-                    })
-                })
+                this.runProcessor(false)
+            }
+        )
+        this.listenFor(
+            "run-processor",event=>{
+                this.runProcessor()
             }
         )
         this.listenFor(
@@ -250,6 +207,88 @@ class FileProcessorCrud extends JsForm {
             }
         )
     }
+    runProcessor(live=true) {
+        let formData = this.serializeWithConfig()
+        if (formData.shop=="" || formData.theme=="") {
+            this.showWarning("Please select Shop & Theme to continue")
+            return;
+        }
+        this.loading()
+        this.upsert(response=>{
+            this.loading()
+            this.object = response.object
+            this.objectId = response.objectId  
+            this.post(`/fileProcessors/${live?'run':'test'}`,formData).then(response=>{
+                this.loaded()
+                
+                let modalContent = null;
+                if (live) {
+                    modalContent = this.runModalContent(response)
+                } else {
+                    modalContent = this.testModalContent(response)
+                }
+                if (response.error) {
+                    this.showError(response.error)
+                    return;
+                } else if (response.warning) {
+                    this.showWarning(response.warning)
+                    return;
+                }
+                let modal = EscModal.show(modalContent)
+                modal.querySelectorAll(".valid").forEach(button=>button.addEventListener("click",event=>{
+                    this.formTarget().querySelector('[name="tested"]').value="1";
+                    EscModal.close()
+                    this.upsert()
+                }))
+                modal.querySelector(".close-modal").addEventListener("click",event=>{
+                    if (!live) {
+                        this.object.tested=false;
+                    } else {
+                        this.object.tested = true;
+                    }
+                    EscModal.close()
+                    this.render()
+                })
+            })
+        })
+    }
+    testModalContent(response) {
+        return `
+            <h1> Check File Contents</h1>
+            <form class="jsform">
+                <div class="formBody">
+                    <div class="formRow">
+                        <div class="formField">
+                            <label>Output</label>
+                            <textarea rows="15">${response.data.processed}</textarea>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="valid">Looks Good</button>
+                        <button type="button" class="close-modal">Edit</button>
+                    </div>
+                </div>
+            </form>
+        `
+    }
+    runModalContent(response) {
+        return `
+            <h1>Updated File</h1>
+            <form class="jsform">
+                <div class="formBody">
+                    <div class="formRow">
+                        <div class="formField">
+                            <label>Output</label>
+                            <textarea rows="15">${response.data.processed}</textarea>
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="close-modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        `
+    }
     serializeWithConfig() {
         let formData = this.serializeForm(this.formTarget())
         formData.configuration = {}
@@ -273,7 +312,7 @@ class FileProcessorCrud extends JsForm {
     upsert(callback=null) {
         this.loaded(false)
         let formData = this.serializeWithConfig()
-        console.error(formData)
+        
         this.post(
                 "/fileProcessors/upsert",
                 formData
