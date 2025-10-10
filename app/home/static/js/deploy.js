@@ -45,7 +45,7 @@ class ThemeFilesDeploy extends JsForm {
         return "Deploy Files"
     }
     formContents() {
-        let selectedFiles = FileFolders.collectFilenames();
+        let selectedFiles = FileFolders.collectFileObjects();
         let filesText  = 'No files';
         if (selectedFiles.length>0) {
             filesText = selectedFiles.map(file=>`${file}`).join(", ")
@@ -71,7 +71,12 @@ class ThemeFilesDeploy extends JsForm {
                 <div class="formField">
                     <label>Deploying Files</label>
                     <div class="files-to-deploy">
-                        ${selectedFiles.map(file=>`<div class="deploy-file">${file}</div>`).join("")}
+                        ${selectedFiles.map(file=>`
+                            <div class="deploy-file">
+                                <div class="folder">${file.folder}/</div>
+                                <div class="file">${file.file}</div>
+                            </div>
+                        `).join("")}
                     </div>
                 </div>
             </div>

@@ -324,7 +324,7 @@ class FileFolders extends Esc {
                                     <label for="${file.id}">
                                         <div class="on"><img src="/static/img/checkbox-on.png"></div>
                                         <div class="off"><img src="/static/img/checkbox-off.png"></div>
-                                        <input type="checkbox" name="fileId" value="${file.id}" class="${this.autoUncheckable(file)?'autoUncheck':''}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
+                                        <input type="checkbox" name="fileId" value="${file.id}" class="${this.autoUncheckable(file)?'autoUncheck':''}" id="${file.id}" data-file-name="${folder.folder}/${file.fileName}" data-folder="${folder.folder}" data-file="${file.fileName}" ${this.files.includes(file.id)?'checked':''}>
                                     </label>
                                     </div>
                                     <div class="name ${file.isCommonFile?' common-file':''}" id="${file.id}" data-file-id="${file.id}" data-collection-id="${ file.collection}" data-binary="${file.binaryFile}">
@@ -395,5 +395,13 @@ class FileFolders extends Esc {
     }
     static collectFilenames() {
         return Array.from(document.querySelectorAll("#fileFolder input:checked")).map(checked=>checked.dataset.fileName)
+    }
+    static collectFileObjects() {
+        return Array.from(document.querySelectorAll("#fileFolder input:checked")).map(checked=>{
+            return {
+                folder:checked.dataset.folder,
+                file:checked.dataset.file,
+            }
+        })
     }
 }
