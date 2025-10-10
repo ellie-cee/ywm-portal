@@ -489,6 +489,8 @@ ul.sidebar-menu {
 }
 [data-clickable] {
   cursor: pointer;
+  font-weight: bold;
+  margin-left: 16px !important;
 }
 .selector {
   display: flex;
@@ -578,4 +580,3 @@ li[data-clickable] {
         margin-left: 16px!important;
         padding:16px;
 }
-/* poop */
