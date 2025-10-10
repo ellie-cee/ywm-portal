@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-re9#=br+((2(gi39y!c20odhoq4tnk-)ph58l(sdu0ep1qa@!7
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG_MODE")=="true"
-ALLOWED_HOSTS = [os.getenv("APP_HOST"),"localhost","127.0.0.1"] 
+ALLOWED_HOSTS = [os.getenv("APP_HOST"),"localhost","127.0.0.1","portal2.ywmonkey.com"] 
 
 
 

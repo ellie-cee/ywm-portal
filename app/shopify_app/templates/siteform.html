@@ -18,17 +18,29 @@
                 </li>
             {% endfor %}
         </ul>
-        <div><a href="/shops">New Shop</a></div>
+        <div class="buttons">
+            <button type="button" class="button" id="newShop">Add Shop</button>
+        </div>
     </div>
     <div class="jsapp"</div>
 </div>
 
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded",event=>{        
-    window.shopForm = new ShopifySite({
-        "objectId":"{{ request.GET.shopId }}"
-    });
+    document.addEventListener("DOMContentLoaded",event=>{
+        
+    
+    document.querySelector("#newShop").addEventListener("click",event=>{
+        window.shopForm = new ShopifySite({})
+    })
+    
+    {% if request.GET.shopId %}
+        window.shopForm = new ShopifySite({
+            "objectId":"{{ request.GET.shopId }}"
+        });
+    {% endif %}
+
+
     // const 
 });
     
