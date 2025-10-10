@@ -74,7 +74,7 @@ class ShopifySite extends JsForm {
         this.listenFor(
             "create",
             event=>{
-                this.loaded(false)
+                this.loading()
                 let formData = this.serializeForm(this.formTarget())
                 this.post(
                     "/shops/upsert",
@@ -88,7 +88,7 @@ class ShopifySite extends JsForm {
         this.listenFor(
             "update",
             event=>{
-                this.loaded(false)
+                this.loading()
                 let formData = this.serializeForm(this.formTarget())
                 this.post(
                     "/shops/upsert",
@@ -102,7 +102,7 @@ class ShopifySite extends JsForm {
         this.listenFor(
             "check-scopes",
             event=>{
-                this.loaded(false)
+                this.loading()
                 this.get(`/shops/recheck/${this.objectId}`).then(response=>{
                     this.loaded();
                     switch(response.status) {
@@ -124,7 +124,7 @@ class ShopifySite extends JsForm {
         this.listenFor(
             "delete",
             event=>{
-                this.loaded(false)
+                this.loading()
                 this.get(`/shops/delete/${this.objectId}`).then(response=>{
                     this.loaded()
                     this.showMessage(`Deleted ${this.shopDetails.shopName}`)

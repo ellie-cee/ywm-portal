@@ -70,7 +70,7 @@ class Login extends JsForm {
             "log-in",
             
             (event)=>{
-                this.loaded(false)
+                this.loading()
                 this.post(
                     "/auth/login",
                     this.serializeForm(this.formTarget())
@@ -97,7 +97,7 @@ class Login extends JsForm {
         this.listenFor(
             "verify-code",
             (event)=>{
-                this.loaded(false)
+                this.loading()
                 this.post(
                     "auth/code/validate",
                     this.serializeForm(this.formTarget())
@@ -121,7 +121,7 @@ class Login extends JsForm {
         this.listenFor(
             "resend-code",
             (event)=>{
-                this.loaded(false)
+                this.loading()
                 this.post(
                     "/auth/code/resend",
                     {}
@@ -134,7 +134,7 @@ class Login extends JsForm {
         this.listenFor(
             "restart-login",
             (event)=>{
-                this.loaded(false)
+                this.loading()
                 this.post(
                     "/auth/code/restart",
                     {}

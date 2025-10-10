@@ -71,7 +71,7 @@ class ThemeFilesDeploy extends JsForm {
                 <div class="formField">
                     <label>Deploying Files</label>
                     <div class="files-to-deploy">
-                        ${selectedFiles.map(file=>`${file}`).join(", ")}
+                        ${selectedFiles.map(file=>`<div class="deploy-file">${file}</div>`).join("")}
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@ class ThemeFilesDeploy extends JsForm {
         ]
     }
     loadThemes(shopId) {
-        this.loaded(false);
+        this.loading()
         this.get(`/shops/themes/${this.selectedShop}`).then(response=>{
             this.themes = response.themeList
             this.render()
@@ -127,7 +127,7 @@ class ThemeFilesDeploy extends JsForm {
             var select = event.target;
             this.selectedShop = select.options[select.selectedIndex].value
             this.selectedTheme = null;
-            this.loaded(false)
+            this.loading()
             this.loadThemes(this.selectedShop)
         })
         this.formTarget().querySelector('select[name="themes"]').addEventListener("change",event=>{

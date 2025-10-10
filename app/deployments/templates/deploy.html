@@ -14,14 +14,15 @@
         display:block;
     }
     .files-to-deploy {
-        display:flex;
-        flex-wrap: wrap;
-        justify-content: center;
+       display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(6, 1fr);
+        margin-top: 8px;
     }
     .deploy-file {
-        background-color:#fcffdd;
-        padding: 12px;
-        border-radius: 10px;
+        
+        font-weight: 600;
+        color: #555555;
     }
     form:has(.empty) .requires-theme,form:has(.unselected) .requires-theme {
             display: none;
@@ -32,7 +33,6 @@
        justify-content: center;
        margin:8px;
        margin-top:16px; 
-
     }
     
 </style>

@@ -13,8 +13,8 @@
     <div class="listing">
         <ul class="sidebar-options">
             {% for shop in shops %}
-                <li data-shop-id="{{ shop.id}}">
-                    <a href="shops?shopId={{ shop.id }}">{{ shop.shopName }}</a>
+                <li data-shop-id="{{ shop.id}}" data-clickable>
+                    {{ shop.shopName }}
                 </li>
             {% endfor %}
         </ul>
@@ -33,6 +33,12 @@
     document.querySelector("#newShop").addEventListener("click",event=>{
         window.shopForm = new ShopifySite({})
     })
+    document.querySelectorAll("[data-shop-id]").forEach(link=>link.addEventListener("click",event=>{
+        window.shopForm = new ShopifySite({
+            objectId:link.dataset.shopId
+        });
+    }))
+
     
     {% if request.GET.shopId %}
         window.shopForm = new ShopifySite({

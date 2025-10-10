@@ -489,13 +489,14 @@ ul.sidebar-menu {
 }
 [data-clickable] {
   cursor: pointer;
-  
 }
 .selector {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap:8px;
+  margin-bottom: 8px;
+
   input {
     display: none;
   }
@@ -530,7 +531,6 @@ a {
     justify-content: flex-start;
     width: 100%;
 }
-
 
 @media screen and (max-width: 720px) {
   
@@ -573,4 +573,9 @@ a {
   color: #555555;
 }
 
+li[data-clickable] {
+        font-weight: bold;
+        margin-left: 16px!important;
+        padding:16px;
+}
 /* poop */

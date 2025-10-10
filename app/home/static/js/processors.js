@@ -198,7 +198,7 @@ class FileProcessorCrud extends JsForm {
             }
         )
         this.listenFor("delete",event=>{
-            this.loaded(false)
+            this.loading()
             this.get(`/fileProcessors/delete/${this.objectId}`).then(response=>{
                     this.loaded()
                     this.showMessage(`Deleted ${this.object.processorName}`)
@@ -310,7 +310,7 @@ class FileProcessorCrud extends JsForm {
         return formData;
     }
     upsert(callback=null) {
-        this.loaded(false)
+        this.loading()
         let formData = this.serializeWithConfig()
         
         this.post(

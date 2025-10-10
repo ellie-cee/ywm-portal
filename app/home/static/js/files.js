@@ -142,7 +142,7 @@ class ThemeFileEditor extends JsForm {
                     this.showError(`${formData.folder}/${formData.fileName} already exists.`)
                     return;
                 }
-                this.loaded(false);
+                this.loading();
                 this.post(
                     "/files/upsert",
                     formData
@@ -160,7 +160,7 @@ class ThemeFileEditor extends JsForm {
                     this.showError(`${formData.folder}/${formData.filemName} already exists.`)
                     return;
                 }
-                this.loaded(false)
+                this.loading()
                 
                 this.post(
                     "/files/upsert",
@@ -207,7 +207,7 @@ class ThemeFileEditor extends JsForm {
                     this.showError(`${formData.folder}/${formData.filemName} already exists.`)
                     return;
                 }
-                this.loaded(false)
+                this.loading()
                 
                 this.post(
                     "/files/upsert",
