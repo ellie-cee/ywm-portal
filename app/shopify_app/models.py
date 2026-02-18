@@ -199,7 +199,7 @@ class ShopifySite(models.Model,IdAware):
         if self.accessTokenExpires>now:
             return self.accessToken
         response = requests.post(
-            f"{self.adminUrl("oauth/access_token")}",
+            f"{self.adminUrl('oauth/access_token')}",
             headers={
                 "Content-Type":"application/x-www-form-urlencoded"
             },
