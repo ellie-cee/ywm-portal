@@ -31,7 +31,7 @@ class ShopifySite(models.Model,IdAware):
     shopName = models.CharField(max_length=255)
     shopDomain = models.CharField(max_length=128,db_index=True)
     accessToken = models.CharField(max_length=255)
-    accessTokenExpires = models.DateTimeField(auto_now_add=True)
+    accessTokenExpires = models.DateTimeField(auto_now_add=True,default=datetime.now)
     contactEmail = models.EmailField(default="email@email.com",null=True)
     shopifyClientSecret = models.CharField(default="",null=True,max_length=255)
     contactName = models.TextField(default="",null=True)
