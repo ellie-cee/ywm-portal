@@ -1,3 +1,4 @@
+from decimal import Decimal
 import sys
 import uuid
 from jmespath import search as jpath
@@ -6,7 +7,11 @@ from dict_recursive_update import recursive_update
 import logging
 from django.db import models
 from django.forms.models import model_to_dict
+from datetime import datetime,date
+
 logger = logging.getLogger(__name__)
+
+
 
 
 class SearchableDict:
@@ -99,5 +104,29 @@ def jsonify(value):
             return ret
         elif isinstance(value,list):
             return [jsonify(x) for x in value]
+        else:
+            return value
+        
+class Data:
+    @staticmethod
+    def jsonify(value):
+        if isinstance(value,dict):
+            ret = {}
+            for key,value in value.items():
+                if isinstance(value,Decimal):
+                    ret[key] = float(value)
+                elif isinstance(value,datetime):
+                    ret[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+                elif isinstance(value,date):
+                    ret[key] = value.strftime("%Y-%m-%d")
+                elif hasattr(value,'dict'):
+                    return value.data
+                else:
+                    ret[key] = Data.jsonify(value)
+            return ret
+        elif isinstance(value,list):
+            return [Data.jsonify(x) for x in value]
+        elif isinstance(value,SearchableDict):
+            return value.data
         else:
             return value

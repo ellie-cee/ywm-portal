@@ -9,5 +9,6 @@ urlpatterns = [
     path("auth/code/validate",views.validate),
     path('auth/code/resend',views.resend),
     path('auth/code/restart',views.resend),
+    path('auth/login/auto',views.autoLogin),
     path("logout",views.logout)
 ]

@@ -43,14 +43,13 @@ class ShopifySite extends JsForm {
             </div>
             <div class="formRow">
                 <div class="formField">
-                    <label>App Key</label>
-                    <div><input type="text" autocomplete="off" name="appKey" value="${this.shopDetails.appKey||""}" required></div>
+                    <label>Client ID</label>
+                    <div><input type="text" autocomplete="off" name="shopifyClientId" value="${this.shopDetails.shopifyClientId||""}" required></div>
                 </div>
                 <div class="formField">
-                    <label>Access Token</label>
+                    <label>Client Secret</label>
                     <div class="labelledInput">
-                        <input type="password" autocomplete="off" name="authToken" value="${this.shopDetails.authToken||""}" required>
-                        <img src="/static/img/peek.png" data-for="authToken" class="peeker">
+                        <input type="text" autocomplete="off" name="shopifyClientSecret" value="${this.shopDetails.shopifyClientSecret||""}" required>
                     </div>
                 </div>
             </div>
@@ -157,7 +156,8 @@ class ShopifySite extends JsForm {
                 this.objectId = response.shop.id
                 this.showError(`
                     The credientials you have supplied are incomplete. Please make sure the following scopes are enabled:
-                    <ul>${response.scopesMissing.map(scope=>`<li>${scope}</li>`).join("")}
+                    
+                    ${response.scopesMissing.map(scope=>`• ${scope}`).join("\n")}
                 `)
                 break;
             case 200:

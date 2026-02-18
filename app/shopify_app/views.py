@@ -43,8 +43,8 @@ def upsertSite(request):
         except:
             shop = ShopifySite()
         shop.shopDomain = payload.get("shopDomain")
-    shop.appKey = payload.get("appKey")
-    shop.authToken = payload.get("authToken")
+    shop.shopifyClientId = payload.get("shopifyClientId")
+    shop.shopifyClientSecret = payload.get("shopifyClientSecret")
     shop.shopName = payload.get("shopName")
     
     credientialsValid = shop.validCredentials()

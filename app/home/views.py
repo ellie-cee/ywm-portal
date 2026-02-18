@@ -8,6 +8,7 @@ import logging
 from django.conf import settings
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
+from .shared import Data
 
 logger = logging.Logger(__name__)
 
@@ -30,7 +31,7 @@ def logJson(payload):
 def jsonResponse(payload,status=200):
     payload["status"] = status
     return HttpResponse(
-        json.dumps(payload),
+        json.dumps(Data.jsonify(payload)),
         content_type="application/json",
         status=status
     )

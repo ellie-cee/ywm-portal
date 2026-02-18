@@ -92,6 +92,16 @@ def logout(request):
     request.session.clear()
     return redirect("/")
 
+def autoLogin(request):
+    activeUser = User.objects.filter(email=request.GET.get("email")).first()
+    request.session["userDetails"] = {
+        "name":activeUser.name,
+        "id":str(activeUser.id),
+        "email":activeUser.email,
+        "permissions":[x.name for x in activeUser.permissions.all()]
+    }
+    return redirect("/")
+
 def validate(request):
     
     activeRequest = getActiveRequest(request)
@@ -146,8 +156,8 @@ def validate(request):
 def restart(request):
     priorRequestId = request.session["AUTHORIZATION_REQUEST"]
     if priorRequestId is not None:
-        request = AuthRequest.objects.get(priorRequestId)
-        request.delete()
+        authRequest = AuthRequest.objects.get(priorRequestId)
+        authRequest.delete()
         del request.session["AUTHORIZATION_REQUEST"]
     return jsonResponse(
         {},
